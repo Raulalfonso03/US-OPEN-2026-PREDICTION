@@ -3,384 +3,297 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
-import matplotlib.patches as mpatches
-import seaborn as sns
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 import warnings
 warnings.filterwarnings('ignore')
 
-# ── Colores oficiales US Open ────────────────────────────────────
-USO_BLUE      = '#0A2240'   # US Open Blue (Pantone 2965 U)
-USO_BLUE_MID  = '#1B4F8A'
-USO_BLUE_LITE = '#4A90D9'
-USO_GREEN     = '#3A7D44'   # US Open Green
-USO_GREEN_LITE= '#5CB85C'
-USO_GOLD      = '#C9A84C'
-USO_WHITE     = '#F5F5F5'
-USO_DARK      = '#061628'
-
 st.set_page_config(
-    page_title='US Open 2026 — Analytics & Prediction',
+    page_title='US Open 2026',
     page_icon='🎾',
     layout='wide',
     initial_sidebar_state='expanded'
 )
 
-st.markdown(f"""
+st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap');
 
-    html, body, [class*="css"] {{
-        font-family: 'Inter', sans-serif;
-        background-color: {USO_DARK};
-        color: {USO_WHITE};
-    }}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-    .stApp {{
-        background: linear-gradient(160deg, {USO_DARK} 0%, #0D2137 60%, #0A1F35 100%);
-    }}
+html, body, [class*="css"], .stApp {
+    font-family: 'Inter', sans-serif !important;
+    background-color: #061525 !important;
+    color: #F0F4F8 !important;
+}
 
-    section[data-testid="stSidebar"] {{
-        background: linear-gradient(180deg, {USO_BLUE} 0%, {USO_DARK} 100%);
-        border-right: 2px solid {USO_GREEN};
-    }}
+/* Sidebar */
+section[data-testid="stSidebar"] {
+    background: #0A1F35 !important;
+    border-right: 1px solid #1B4F8A30 !important;
+    padding-top: 0 !important;
+}
+section[data-testid="stSidebar"] * { color: #F0F4F8 !important; }
+section[data-testid="stSidebar"] .stRadio label {
+    font-size: 0.9em !important;
+    padding: 10px 0 !important;
+    letter-spacing: 0.5px !important;
+    cursor: pointer !important;
+}
+div[data-testid="stSidebarContent"] { padding: 0 16px !important; }
 
-    section[data-testid="stSidebar"] * {{
-        color: {USO_WHITE} !important;
-    }}
+/* Remove streamlit branding */
+#MainMenu, footer, header { visibility: hidden !important; }
+.block-container { padding-top: 0 !important; padding-bottom: 40px !important; max-width: 1200px !important; }
 
-    .hero-banner {{
-        background: linear-gradient(135deg, {USO_BLUE} 0%, {USO_BLUE_MID} 50%, {USO_GREEN} 100%);
-        border-radius: 16px;
-        padding: 48px 40px;
-        margin-bottom: 32px;
-        text-align: center;
-        border: 1px solid {USO_GOLD};
-        position: relative;
-        overflow: hidden;
-    }}
+/* Hero */
+.hero {
+    background: linear-gradient(135deg, #0A2240 0%, #0D3B6E 40%, #1A5C3A 100%);
+    border-radius: 0 0 24px 24px;
+    padding: 56px 48px 48px;
+    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+}
+.hero::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+}
+.hero-eyebrow {
+    font-size: 0.75em;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #C9A84C;
+    margin-bottom: 12px;
+}
+.hero-title {
+    font-family: 'Bebas Neue', 'Impact', sans-serif;
+    font-size: 5em;
+    letter-spacing: 6px;
+    color: #FFFFFF;
+    line-height: 0.9;
+    text-shadow: 0 4px 24px rgba(0,0,0,0.4);
+}
+.hero-sub {
+    font-size: 1em;
+    color: #94A3B8;
+    margin-top: 16px;
+    font-weight: 300;
+    letter-spacing: 1px;
+}
+.hero-pill {
+    display: inline-block;
+    background: rgba(201,168,76,0.15);
+    border: 1px solid #C9A84C60;
+    color: #C9A84C;
+    padding: 6px 20px;
+    border-radius: 100px;
+    font-size: 0.75em;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 20px;
+}
 
-    .hero-banner::before {{
-        content: '🎾';
-        font-size: 120px;
-        position: absolute;
-        opacity: 0.07;
-        top: -20px;
-        right: -20px;
-    }}
+/* Cards */
+.kpi-card {
+    background: #0D2137;
+    border: 1px solid #1B4F8A25;
+    border-radius: 16px;
+    padding: 28px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #1B4F8A, #3A7D44);
+}
+.kpi-num {
+    font-family: 'Bebas Neue', 'Impact', sans-serif;
+    font-size: 3em;
+    color: #FFFFFF;
+    line-height: 1;
+}
+.kpi-lbl {
+    font-size: 0.7em;
+    color: #64748B;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 6px;
+    font-weight: 600;
+}
 
-    .hero-title {{
-        font-family: 'Bebas Neue', 'Impact', sans-serif;
-        font-size: 4em;
-        letter-spacing: 4px;
-        color: {USO_WHITE};
-        margin: 0;
-        text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
-    }}
+/* Section title */
+.sec-title {
+    font-family: 'Bebas Neue', 'Impact', sans-serif;
+    font-size: 1.4em;
+    letter-spacing: 3px;
+    color: #FFFFFF;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.sec-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, #1B4F8A40, transparent);
+}
 
-    .hero-subtitle {{
-        font-size: 1.1em;
-        color: {USO_GOLD};
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        margin-top: 8px;
-        font-weight: 600;
-    }}
+/* Player rows */
+.p-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #0D2137;
+    border: 1px solid #1B4F8A20;
+    border-radius: 12px;
+    padding: 14px 20px;
+    margin-bottom: 8px;
+    transition: border-color 0.2s;
+}
+.p-row:hover { border-color: #3A7D4460; }
+.p-pos {
+    font-family: 'Bebas Neue', 'Impact', sans-serif;
+    font-size: 1.8em;
+    color: #C9A84C;
+    min-width: 36px;
+}
+.p-flag { font-size: 1.3em; }
+.p-name { font-size: 0.95em; font-weight: 600; color: #F0F4F8; flex: 1; }
+.p-pct {
+    font-family: 'Bebas Neue', 'Impact', sans-serif;
+    font-size: 1.5em;
+    color: #3A7D44;
+}
 
-    .hero-badge {{
-        display: inline-block;
-        background: {USO_GOLD};
-        color: {USO_DARK};
-        padding: 4px 16px;
-        border-radius: 20px;
-        font-size: 0.8em;
-        font-weight: 700;
-        letter-spacing: 1px;
-        margin-top: 12px;
-        text-transform: uppercase;
-    }}
+/* Divider */
+.divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #1B4F8A40, transparent);
+    margin: 32px 0;
+}
 
-    .stat-card {{
-        background: linear-gradient(135deg, {USO_BLUE} 0%, {USO_BLUE_MID} 100%);
-        border: 1px solid {USO_BLUE_LITE}40;
-        border-radius: 12px;
-        padding: 24px 20px;
-        text-align: center;
-        position: relative;
-        overflow: hidden;
-    }}
+/* Compare */
+.cmp-name {
+    font-family: 'Bebas Neue', 'Impact', sans-serif;
+    font-size: 2.2em;
+    letter-spacing: 2px;
+    text-align: center;
+}
+.cmp-rank {
+    text-align: center;
+    color: #C9A84C;
+    font-weight: 600;
+    font-size: 0.85em;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 4px;
+}
+.stat-line {
+    display: flex;
+    align-items: center;
+    padding: 13px 0;
+    border-bottom: 1px solid #1B4F8A15;
+}
+.sv-a { flex: 1; text-align: right; padding-right: 20px; font-weight: 700; font-size: 1.05em; color: #4A90D9; }
+.sv-lbl { min-width: 180px; text-align: center; font-size: 0.72em; color: #64748B; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+.sv-b { flex: 1; text-align: left; padding-left: 20px; font-weight: 700; font-size: 1.05em; color: #EF5350; }
 
-    .stat-card::after {{
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, {USO_GREEN}, {USO_BLUE_LITE});
-    }}
+/* Winner */
+.winner-box {
+    background: linear-gradient(135deg, #1A3D2B 0%, #0D2137 100%);
+    border: 1px solid #3A7D4460;
+    border-radius: 16px;
+    padding: 32px;
+    text-align: center;
+    margin: 24px 0;
+}
+.winner-tag { font-size: 0.7em; letter-spacing: 4px; color: #C9A84C; text-transform: uppercase; font-weight: 600; }
+.winner-nm {
+    font-family: 'Bebas Neue', 'Impact', sans-serif;
+    font-size: 3.2em;
+    letter-spacing: 3px;
+    color: #FFFFFF;
+    margin: 8px 0 4px;
+}
+.winner-prob { font-size: 0.9em; color: #5CB85C; font-weight: 600; letter-spacing: 1px; }
 
-    .stat-number {{
-        font-family: 'Bebas Neue', 'Impact', sans-serif;
-        font-size: 2.8em;
-        color: {USO_WHITE};
-        line-height: 1;
-    }}
+/* Probability display */
+.prob-display {
+    font-family: 'Bebas Neue', 'Impact', sans-serif;
+    font-size: 3.5em;
+    text-align: center;
+    line-height: 1;
+}
 
-    .stat-label {{
-        font-size: 0.75em;
-        color: {USO_GOLD};
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        margin-top: 6px;
-        font-weight: 600;
-    }}
+/* Button */
+.stButton > button {
+    background: linear-gradient(135deg, #1A5C3A 0%, #0D3B26 100%) !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    border-radius: 10px !important;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 0.9em !important;
+    letter-spacing: 2px !important;
+    text-transform: uppercase !important;
+    padding: 14px 32px !important;
+    transition: all 0.2s !important;
+}
+.stButton > button:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 24px rgba(58,125,68,0.35) !important;
+}
 
-    .player-card {{
-        background: linear-gradient(135deg, {USO_BLUE} 0%, #0D2137 100%);
-        border: 1px solid {USO_BLUE_LITE}30;
-        border-radius: 12px;
-        padding: 16px 20px;
-        margin: 6px 0;
-        display: flex;
-        align-items: center;
-        transition: all 0.2s;
-        position: relative;
-        overflow: hidden;
-    }}
+/* Selectbox */
+div[data-testid="stSelectbox"] label {
+    color: #94A3B8 !important;
+    font-size: 0.75em !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1.5px !important;
+}
 
-    .player-card::before {{
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 4px;
-        background: linear-gradient(180deg, {USO_GREEN}, {USO_BLUE_LITE});
-    }}
+/* Table */
+.stDataFrame { border-radius: 12px !important; overflow: hidden !important; }
 
-    .player-rank {{
-        font-family: 'Bebas Neue', 'Impact', sans-serif;
-        font-size: 2em;
-        color: {USO_GOLD};
-        min-width: 48px;
-        text-align: center;
-    }}
-
-    .player-name {{
-        font-size: 1.1em;
-        font-weight: 700;
-        color: {USO_WHITE};
-        flex: 1;
-        padding-left: 12px;
-    }}
-
-    .player-prob {{
-        font-family: 'Bebas Neue', 'Impact', sans-serif;
-        font-size: 1.6em;
-        color: {USO_GREEN_LITE};
-    }}
-
-    .player-flag {{
-        font-size: 1.4em;
-        padding-right: 8px;
-    }}
-
-    .section-header {{
-        font-family: 'Bebas Neue', 'Impact', sans-serif;
-        font-size: 1.8em;
-        letter-spacing: 3px;
-        color: {USO_WHITE};
-        border-bottom: 2px solid {USO_GREEN};
-        padding-bottom: 8px;
-        margin-bottom: 20px;
-        text-transform: uppercase;
-    }}
-
-    .vs-container {{
-        background: linear-gradient(135deg, {USO_BLUE} 0%, {USO_BLUE_MID} 100%);
-        border-radius: 16px;
-        padding: 32px;
-        border: 1px solid {USO_GOLD}40;
-        margin: 16px 0;
-    }}
-
-    .player-name-big {{
-        font-family: 'Bebas Neue', 'Impact', sans-serif;
-        font-size: 2.4em;
-        letter-spacing: 2px;
-        text-align: center;
-    }}
-
-    .prob-big {{
-        font-family: 'Bebas Neue', 'Impact', sans-serif;
-        font-size: 4em;
-        text-align: center;
-        line-height: 1;
-    }}
-
-    .winner-banner {{
-        background: linear-gradient(135deg, {USO_GREEN} 0%, #2A6032 100%);
-        border-radius: 12px;
-        padding: 24px;
-        text-align: center;
-        border: 2px solid {USO_GOLD};
-        margin: 20px 0;
-    }}
-
-    .winner-label {{
-        font-family: 'Bebas Neue', 'Impact', sans-serif;
-        font-size: 1em;
-        letter-spacing: 4px;
-        color: {USO_GOLD};
-        text-transform: uppercase;
-    }}
-
-    .winner-name {{
-        font-family: 'Bebas Neue', 'Impact', sans-serif;
-        font-size: 3em;
-        letter-spacing: 3px;
-        color: {USO_WHITE};
-    }}
-
-    .stat-row {{
-        display: flex;
-        align-items: center;
-        padding: 14px 0;
-        border-bottom: 1px solid {USO_BLUE_LITE}20;
-    }}
-
-    .stat-val-a {{
-        font-size: 1.2em;
-        font-weight: 700;
-        color: {USO_BLUE_LITE};
-        flex: 1;
-        text-align: right;
-        padding-right: 16px;
-    }}
-
-    .stat-label-center {{
-        font-size: 0.8em;
-        color: {USO_GOLD};
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        min-width: 160px;
-        text-align: center;
-        font-weight: 600;
-    }}
-
-    .stat-val-b {{
-        font-size: 1.2em;
-        font-weight: 700;
-        color: #EF5350;
-        flex: 1;
-        text-align: left;
-        padding-left: 16px;
-    }}
-
-    .win-indicator {{
-        color: {USO_GREEN_LITE};
-        font-weight: 700;
-    }}
-
-    .court-divider {{
-        height: 4px;
-        background: linear-gradient(90deg, {USO_GREEN}, {USO_BLUE_LITE}, {USO_GREEN});
-        border-radius: 2px;
-        margin: 24px 0;
-    }}
-
-    .round-badge {{
-        display: inline-block;
-        background: {USO_BLUE};
-        border: 1px solid {USO_BLUE_LITE}50;
-        border-radius: 8px;
-        padding: 8px 16px;
-        text-align: center;
-        margin: 4px;
-    }}
-
-    .round-badge-title {{
-        font-size: 0.7em;
-        color: {USO_GOLD};
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }}
-
-    .round-badge-val {{
-        font-family: 'Bebas Neue', 'Impact', sans-serif;
-        font-size: 1.6em;
-        color: {USO_WHITE};
-    }}
-
-    div[data-testid="stSelectbox"] label {{
-        color: {USO_GOLD} !important;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-size: 0.85em;
-    }}
-
-    .stButton > button {{
-        background: linear-gradient(135deg, {USO_GREEN} 0%, #2A6032 100%) !important;
-        color: white !important;
-        border: none !important;
-        border-radius: 8px !important;
-        font-weight: 700 !important;
-        letter-spacing: 2px !important;
-        text-transform: uppercase !important;
-        padding: 12px 32px !important;
-        font-size: 1em !important;
-        transition: all 0.2s !important;
-    }}
-
-    .stButton > button:hover {{
-        transform: translateY(-1px) !important;
-        box-shadow: 0 4px 16px {USO_GREEN}60 !important;
-    }}
-
-    .nav-logo {{
-        font-family: 'Bebas Neue', 'Impact', sans-serif;
-        font-size: 1.6em;
-        letter-spacing: 3px;
-        color: {USO_WHITE};
-        text-align: center;
-        padding: 16px 0 8px 0;
-    }}
-
-    .nav-year {{
-        font-size: 0.65em;
-        color: {USO_GOLD};
-        letter-spacing: 4px;
-        text-align: center;
-        margin-bottom: 24px;
-    }}
-
-    .table-header {{
-        background: {USO_BLUE};
-        color: {USO_GOLD};
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-size: 0.8em;
-    }}
-
-    .stDataFrame {{
-        border: 1px solid {USO_BLUE_LITE}30;
-        border-radius: 8px;
-        overflow: hidden;
-    }}
-
-    /* Progress bars */
-    .stProgress > div > div > div {{
-        background: linear-gradient(90deg, {USO_GREEN}, {USO_BLUE_LITE}) !important;
-    }}
+/* Sidebar nav logo */
+.sb-logo {
+    padding: 32px 0 8px;
+    text-align: center;
+    font-family: 'Bebas Neue', 'Impact', sans-serif;
+    font-size: 1.8em;
+    letter-spacing: 4px;
+    color: #FFFFFF;
+}
+.sb-year {
+    text-align: center;
+    font-size: 0.7em;
+    color: #C9A84C;
+    letter-spacing: 3px;
+    margin-bottom: 28px;
+}
+.sb-line {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #1B4F8A80, transparent);
+    margin: 0 0 20px;
+}
 </style>
 """, unsafe_allow_html=True)
 
 
-# ── Cargar datos ─────────────────────────────────────────────────
+# ── Data loading ─────────────────────────────────────────────────
 @st.cache_data
 def load_data():
     try:
@@ -388,43 +301,39 @@ def load_data():
         uso     = pd.read_csv('uso_matches_clean.csv')
         ml      = pd.read_csv('ml_model_features.csv')
         tourney = pd.read_csv('tournament_predictions_uso2026.csv')
-        power   = pd.read_csv('power_rankings_uso2026.csv')
-        return atp, uso, ml, tourney, power
+        return atp, uso, ml, tourney
     except FileNotFoundError as e:
-        st.error(f'❌ Archivo no encontrado: {e}\n\nAsegúrate de subir todos los CSVs.')
+        st.error(f'Missing file: {e}')
         st.stop()
 
 @st.cache_data
-def compute_stats(atp, uso):
-    hard = atp[atp['surface'] == 'Hard'].copy()
+def compute_stats(_atp, _uso):
+    hard = _atp[_atp['surface'] == 'Hard'].copy()
     for col in ['w_ace','w_df','w_svpt','w_1stIn','w_bpSaved','w_bpFaced','l_bpSaved','l_bpFaced']:
         if col in hard.columns:
             hard[col] = pd.to_numeric(hard[col], errors='coerce')
     hard['w_bp_save'] = np.where(hard['w_bpFaced']>0, hard['w_bpSaved']/hard['w_bpFaced'], np.nan)
     hard['w_bp_conv'] = np.where(hard['l_bpFaced']>0, (hard['l_bpFaced']-hard['l_bpSaved'])/hard['l_bpFaced'], np.nan)
-    hard['w_1st_pct'] = np.where(hard['w_svpt']>0, hard['w_1stIn']/hard['w_svpt'], np.nan)
+    hard['w_1st']     = np.where(hard['w_svpt']>0, hard['w_1stIn']/hard['w_svpt'], np.nan)
     hw = hard.groupby('winner_name').size().rename('hw')
     hl = hard.groupby('loser_name').size().rename('hl')
     hs = pd.concat([hw, hl], axis=1).fillna(0)
     hs['ht'] = hs['hw'] + hs['hl']
-    hs['hard_win_pct'] = hs['hw'] / hs['ht']
+    hs['hwp'] = hs['hw'] / hs['ht']
     hs = hs.reset_index().rename(columns={'index':'player'})
     hs = hs[hs['ht'] >= 20]
     sv = hard.groupby('winner_name').agg(
-        avg_aces=('w_ace','mean'), avg_df=('w_df','mean'),
-        avg_bp_save=('w_bp_save','mean'), avg_bp_conv=('w_bp_conv','mean'),
-        avg_1st=('w_1st_pct','mean')
+        aces=('w_ace','mean'), df=('w_df','mean'),
+        bps=('w_bp_save','mean'), bpc=('w_bp_conv','mean'), fsp=('w_1st','mean')
     ).reset_index().rename(columns={'winner_name':'player'})
-    uw = uso.groupby('winner_name').size().rename('uw')
-    ul = uso.groupby('loser_name').size().rename('ul')
+    uw = _uso.groupby('winner_name').size().rename('uw')
+    ul = _uso.groupby('loser_name').size().rename('ul')
     us = pd.concat([uw, ul], axis=1).fillna(0)
-    us['ut'] = us['uw'] + us['ul']
-    us['uso_win_pct'] = us['uw'] / us['ut']
+    us['ut']  = us['uw'] + us['ul']
+    us['uwp'] = us['uw'] / us['ut']
     us = us.reset_index().rename(columns={'index':'player'})
-    wn = atp[['tourney_date','winner_name']].rename(columns={'winner_name':'player'})
-    wn['r'] = 1
-    ln = atp[['tourney_date','loser_name']].rename(columns={'loser_name':'player'})
-    ln['r'] = 0
+    wn = _atp[['tourney_date','winner_name']].rename(columns={'winner_name':'player'}); wn['r'] = 1
+    ln = _atp[['tourney_date','loser_name']].rename(columns={'loser_name':'player'});   ln['r'] = 0
     am = pd.concat([wn, ln], ignore_index=True)
     am['tourney_date'] = pd.to_datetime(am['tourney_date'], errors='coerce')
     am = am.sort_values(['player','tourney_date'])
@@ -433,29 +342,22 @@ def compute_stats(atp, uso):
           .agg(rw='sum', rt='count').reset_index())
     rf = rf.merge(tm, on='player')
     rf = rf[rf['tm'] >= 50]
-    rf['recent_pct'] = rf['rw'] / rf['rt']
+    rf['rfp'] = rf['rw'] / rf['rt']
     ps = hs.merge(sv, on='player', how='left')
-    ps = ps.merge(rf[['player','recent_pct']], on='player', how='left')
-    ps = ps.merge(us[['player','uw','uso_win_pct']], on='player', how='left')
-    ps['uso_win_pct'] = ps['uso_win_pct'].fillna(0.5)
-    ps['recent_pct']  = ps['recent_pct'].fillna(0.5)
+    ps = ps.merge(rf[['player','rfp']], on='player', how='left')
+    ps = ps.merge(us[['player','uw','uwp']], on='player', how='left')
+    ps['uwp'] = ps['uwp'].fillna(0.5)
+    ps['rfp'] = ps['rfp'].fillna(0.5)
     extras = pd.DataFrame([
-        {'player':'Joao Fonseca','hw':27,'hl':17,'ht':44,'hard_win_pct':0.614,
-         'avg_aces':6.0,'avg_df':0.17,'avg_bp_save':0.665,'avg_bp_conv':0.38,
-         'avg_1st':0.64,'recent_pct':0.60,'uw':1,'uso_win_pct':0.50},
-        {'player':'Jakub Mensik','hw':21,'hl':10,'ht':31,'hard_win_pct':0.677,
-         'avg_aces':7.2,'avg_df':0.20,'avg_bp_save':0.640,'avg_bp_conv':0.41,
-         'avg_1st':0.63,'recent_pct':0.65,'uw':0,'uso_win_pct':0.50},
-        {'player':'Rafael Jodar','hw':18,'hl':9,'ht':27,'hard_win_pct':0.667,
-         'avg_aces':5.5,'avg_df':0.18,'avg_bp_save':0.650,'avg_bp_conv':0.39,
-         'avg_1st':0.62,'recent_pct':0.60,'uw':0,'uso_win_pct':0.50},
+        {'player':'Joao Fonseca','hw':27,'hl':17,'ht':44,'hwp':0.614,'aces':6.0,'df':0.17,'bps':0.665,'bpc':0.38,'fsp':0.64,'rfp':0.60,'uw':1,'uwp':0.50},
+        {'player':'Jakub Mensik','hw':21,'hl':10,'ht':31,'hwp':0.677,'aces':7.2,'df':0.20,'bps':0.640,'bpc':0.41,'fsp':0.63,'rfp':0.65,'uw':0,'uwp':0.50},
+        {'player':'Rafael Jodar','hw':18,'hl':9,'ht':27,'hwp':0.667,'aces':5.5,'df':0.18,'bps':0.650,'bpc':0.39,'fsp':0.62,'rfp':0.60,'uw':0,'uwp':0.50},
     ])
-    ps = pd.concat([ps, extras], ignore_index=True)
-    return ps
+    return pd.concat([ps, extras], ignore_index=True)
 
 @st.cache_resource
-def train_rf(atp, ps):
-    hard = atp[atp['surface'] == 'Hard'].copy()
+def train_model(_atp, _ps):
+    hard = _atp[_atp['surface'] == 'Hard'].copy()
     for col in ['w_ace','w_df','w_svpt','w_1stIn','w_bpSaved','w_bpFaced',
                 'l_bpSaved','l_bpFaced','winner_rank','loser_rank']:
         if col in hard.columns:
@@ -464,48 +366,39 @@ def train_rf(atp, ps):
     hard['w_bp_conv'] = np.where(hard['l_bpFaced']>0, (hard['l_bpFaced']-hard['l_bpSaved'])/hard['l_bpFaced'], np.nan)
     hard['rank_diff'] = hard['loser_rank'] - hard['winner_rank']
     md = hard[['winner_name','loser_name','rank_diff']].dropna()
-    md = md.merge(ps[['player','hard_win_pct','avg_aces','avg_df','avg_bp_save','avg_bp_conv']],
-                  left_on='winner_name', right_on='player', how='left').drop(columns='player')
-    md = md.rename(columns={'hard_win_pct':'w_wp','avg_aces':'w_ac','avg_df':'w_df2',
-                             'avg_bp_save':'w_bs','avg_bp_conv':'w_bc'})
-    md = md.merge(ps[['player','hard_win_pct','avg_aces','avg_df','avg_bp_save','avg_bp_conv']],
-                  left_on='loser_name', right_on='player', how='left').drop(columns='player')
-    md = md.rename(columns={'hard_win_pct':'l_wp','avg_aces':'l_ac','avg_df':'l_df2',
-                             'avg_bp_save':'l_bs','avg_bp_conv':'l_bc'})
-    md['d_wp'] = md['w_wp'] - md['l_wp']
-    md['d_ac'] = md['w_ac'] - md['l_ac']
-    md['d_df'] = md['w_df2']- md['l_df2']
-    md['d_bs'] = md['w_bs'] - md['l_bs']
-    md['d_bc'] = md['w_bc'] - md['l_bc']
+    for side, prefix in [('winner_name','w'), ('loser_name','l')]:
+        md = md.merge(_ps[['player','hwp','aces','df','bps','bpc']],
+                      left_on=side, right_on='player', how='left').drop(columns='player')
+        md = md.rename(columns={'hwp':f'{prefix}wp','aces':f'{prefix}ac',
+                                 'df':f'{prefix}df','bps':f'{prefix}bs','bpc':f'{prefix}bc'})
+    for c in ['wp','ac','df','bs','bc']:
+        md[f'd_{c}'] = md[f'w{c}'] - md[f'l{c}']
     md['label'] = 1
     mir = md.copy()
     for c in ['rank_diff','d_wp','d_ac','d_df','d_bs','d_bc']:
         mir[c] = -mir[c]
     mir['label'] = 0
     tr = pd.concat([md, mir], ignore_index=True)
-    FEAT = ['rank_diff','d_wp','d_ac','d_df','d_bs','d_bc']
-    X = tr[FEAT].fillna(0)
-    y = tr['label']
-    Xtr, _, ytr, _ = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+    F = ['rank_diff','d_wp','d_ac','d_df','d_bs','d_bc']
+    X = tr[F].fillna(0); y = tr['label']
+    Xtr,_,ytr,_ = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
     rf = RandomForestClassifier(n_estimators=100, max_depth=7, random_state=42)
     rf.fit(Xtr, ytr)
-    return rf, FEAT
+    return rf, F
 
-def pred(pa, pb, rf, FEAT, ps, rm):
-    sa = ps[ps['player']==pa]
-    sb = ps[ps['player']==pb]
+def predict(pa, pb, rf, F, ps, rm):
+    sa = ps[ps['player']==pa]; sb = ps[ps['player']==pb]
     if len(sa)==0 or len(sb)==0: return 0.5, 0.5
     sa, sb = sa.iloc[0], sb.iloc[0]
     ra = rm.get(pa, 50); rb = rm.get(pb, 50)
-    f = pd.DataFrame([{'rank_diff':rb-ra,'d_wp':sa['hard_win_pct']-sb['hard_win_pct'],
-                        'd_ac':sa['avg_aces']-sb['avg_aces'],'d_df':sa['avg_df']-sb['avg_df'],
-                        'd_bs':sa['avg_bp_save']-sb['avg_bp_save'],
-                        'd_bc':sa['avg_bp_conv']-sb['avg_bp_conv']}])[FEAT].fillna(0)
+    f = pd.DataFrame([{'rank_diff':rb-ra,'d_wp':sa['hwp']-sb['hwp'],
+                        'd_ac':sa['aces']-sb['aces'],'d_df':sa['df']-sb['df'],
+                        'd_bs':sa['bps']-sb['bps'],'d_bc':sa['bpc']-sb['bpc']}])[F].fillna(0)
     p = rf.predict_proba(f)[0][1]
     return p, 1-p
 
-# ── Cargar ───────────────────────────────────────────────────────
-atp, uso, ml, tourney, power = load_data()
+# ── Init ─────────────────────────────────────────────────────────
+atp, uso, ml, tourney = load_data()
 
 for df in [atp, uso]:
     if 'tourney_date' in df.columns:
@@ -515,21 +408,16 @@ for df in [atp, uso]:
     if 'surface' in df.columns:
         df['surface'] = df['surface'].str.strip().str.title()
 
-ps   = compute_stats(atp, uso)
-rf_m, FEAT = train_rf(atp, ps)
+ps = compute_stats(atp, uso)
+rf_m, F = train_model(atp, ps)
 
-rm = {}
-if 'full_name' in ml.columns and 'atp_rank' in ml.columns:
-    rm = ml.set_index('full_name')['atp_rank'].to_dict()
+rm = ml.set_index('full_name')['atp_rank'].to_dict() if 'full_name' in ml.columns and 'atp_rank' in ml.columns else {}
 
-# Solo jugadores activos del ranking 2026
 if 'full_name' in ml.columns:
-    active = ml['full_name'].tolist()
-    all_players = sorted([p for p in active if p in ps['player'].values])
+    all_players = sorted([p for p in ml['full_name'].tolist() if p in ps['player'].values])
 else:
     all_players = sorted(ps[ps['ht'] >= 50]['player'].tolist())
 
-# Flags aproximadas por país
 FLAGS = {
     'ITA':'🇮🇹','ESP':'🇪🇸','GER':'🇩🇪','SRB':'🇷🇸','USA':'🇺🇸','CAN':'🇨🇦',
     'AUS':'🇦🇺','RUS':'🇷🇺','GBR':'🇬🇧','FRA':'🇫🇷','NOR':'🇳🇴','DEN':'🇩🇰',
@@ -537,364 +425,292 @@ FLAGS = {
     'MON':'🇲🇨','CZE':'🇨🇿','POL':'🇵🇱','BEL':'🇧🇪','NED':'🇳🇱','HUN':'🇭🇺',
     'SUI':'🇨🇭','CRO':'🇭🇷','BUL':'🇧🇬','TPE':'🇹🇼','JPN':'🇯🇵','KOR':'🇰🇷',
 }
-
-def get_flag(player):
+def flag(p):
     if 'full_name' in ml.columns and 'country' in ml.columns:
-        row = ml[ml['full_name']==player]
-        if len(row)>0:
-            return FLAGS.get(row.iloc[0]['country'], '🎾')
+        r = ml[ml['full_name']==p]
+        if len(r)>0: return FLAGS.get(r.iloc[0]['country'], '🎾')
     return '🎾'
 
-def make_chart(fig):
-    fig.patch.set_facecolor('none')
-    for ax in fig.axes:
-        ax.set_facecolor('none')
-        ax.tick_params(colors=USO_WHITE)
-        ax.xaxis.label.set_color(USO_WHITE)
-        ax.yaxis.label.set_color(USO_WHITE)
-        ax.title.set_color(USO_WHITE)
-        for spine in ax.spines.values():
-            spine.set_edgecolor(USO_BLUE_LITE+'40')
-    return fig
+def mk_chart():
+    fig, ax = plt.subplots(figsize=(7, 6))
+    fig.patch.set_alpha(0)
+    ax.set_facecolor('none')
+    ax.tick_params(colors='#94A3B8', labelsize=9)
+    ax.xaxis.label.set_color('#94A3B8')
+    ax.yaxis.label.set_color('#94A3B8')
+    for sp in ax.spines.values(): sp.set_visible(False)
+    return fig, ax
 
 # ── Sidebar ──────────────────────────────────────────────────────
 with st.sidebar:
-    st.markdown(f'<div class="nav-logo">🎾 US OPEN</div>', unsafe_allow_html=True)
-    st.markdown(f'<div class="nav-year">2026 ANALYTICS PLATFORM</div>', unsafe_allow_html=True)
-    st.markdown('<div class="court-divider"></div>', unsafe_allow_html=True)
-    page = st.radio('', ['🏠  Home', '👤  Player Comparison', '🎯  Match Predictor', '🏆  Tournament Prediction'],
+    st.markdown('<div class="sb-logo">🎾 US OPEN</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sb-year">2026</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sb-line"></div>', unsafe_allow_html=True)
+    page = st.radio('Navigation', ['Home', 'Player Comparison', 'Match Predictor', 'Tournament Prediction'],
                     label_visibility='collapsed')
-    st.markdown('<div class="court-divider"></div>', unsafe_allow_html=True)
-    st.markdown(f'<p style="color:{USO_GOLD};font-size:0.75em;text-align:center;letter-spacing:1px">POWERED BY MACHINE LEARNING<br>DATA: ATP 2015–2024</p>', unsafe_allow_html=True)
 
-# ════════════════════════════════════════════════════════════════
+# ════════════════════════════════════
 # HOME
-# ════════════════════════════════════════════════════════════════
-if '🏠' in page:
-    st.markdown(f"""
-    <div class="hero-banner">
-        <div class="hero-title">US OPEN 2026</div>
-        <div class="hero-subtitle">Analytics & Prediction Platform</div>
-        <div class="hero-badge">⚡ Powered by Random Forest ML</div>
+# ════════════════════════════════════
+if page == 'Home':
+    st.markdown("""
+    <div class="hero">
+        <div class="hero-eyebrow">Analytics & Prediction Platform</div>
+        <div class="hero-title">US OPEN<br>2026</div>
+        <div class="hero-sub">Machine learning predictions for the US Open draw</div>
+        <div class="hero-pill">Flushing Meadows · New York</div>
     </div>
     """, unsafe_allow_html=True)
 
-    c1, c2, c3, c4 = st.columns(4)
-    with c1:
-        st.markdown(f"""<div class="stat-card">
-            <div class="stat-number">{len(atp):,}</div>
-            <div class="stat-label">Matches Analyzed</div>
-        </div>""", unsafe_allow_html=True)
-    with c2:
-        st.markdown(f"""<div class="stat-card">
-            <div class="stat-number">{len(uso):,}</div>
-            <div class="stat-label">US Open Matches</div>
-        </div>""", unsafe_allow_html=True)
-    with c3:
-        st.markdown(f"""<div class="stat-card">
-            <div class="stat-number">10</div>
-            <div class="stat-label">Years of Data</div>
-        </div>""", unsafe_allow_html=True)
-    with c4:
-        st.markdown(f"""<div class="stat-card">
-            <div class="stat-number">128</div>
-            <div class="stat-label">Draw Players</div>
-        </div>""", unsafe_allow_html=True)
+    c1,c2,c3,c4 = st.columns(4)
+    for col, num, lbl in zip(
+        [c1,c2,c3,c4],
+        [f'{len(atp):,}', f'{len(uso):,}', '10', '128'],
+        ['Matches Analyzed','US Open Matches','Years of Data','Draw Size']
+    ):
+        with col:
+            st.markdown(f'<div class="kpi-card"><div class="kpi-num">{num}</div><div class="kpi-lbl">{lbl}</div></div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="court-divider"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
-    col_l, col_r = st.columns([1, 1])
+    col_l, col_r = st.columns([1,1])
+    top10 = tourney.head(10).reset_index(drop=True)
+    medals = ['1','2','3','4','5','6','7','8','9','10']
 
     with col_l:
-        st.markdown('<div class="section-header">🏆 Top 10 Contenders</div>', unsafe_allow_html=True)
-        top10 = tourney.head(10).reset_index(drop=True)
-        medals = ['🥇','🥈','🥉','4','5','6','7','8','9','10']
+        st.markdown('<div class="sec-title">Top 10 Contenders</div>', unsafe_allow_html=True)
         for i, row in top10.iterrows():
-            flag = get_flag(row['player'])
             st.markdown(f"""
-            <div class="player-card">
-                <div class="player-rank">{medals[i]}</div>
-                <div class="player-flag">{flag}</div>
-                <div class="player-name">{row['player']}</div>
-                <div class="player-prob">{row['win_title']:.1%}</div>
-            </div>
-            """, unsafe_allow_html=True)
+            <div class="p-row">
+                <div class="p-pos">{medals[i]}</div>
+                <div class="p-flag">{flag(row['player'])}</div>
+                <div class="p-name">{row['player']}</div>
+                <div class="p-pct">{row['win_title']:.1%}</div>
+            </div>""", unsafe_allow_html=True)
 
     with col_r:
-        st.markdown('<div class="section-header">📊 Title Probability</div>', unsafe_allow_html=True)
-        fig, ax = plt.subplots(figsize=(7, 6))
+        st.markdown('<div class="sec-title">Title Probability</div>', unsafe_allow_html=True)
+        fig, ax = mk_chart()
         top10_s = top10.sort_values('win_title', ascending=True)
-        colors_bar = [USO_GOLD if i == len(top10_s)-1 else USO_GREEN if i >= len(top10_s)-3 else USO_BLUE_MID
+        bar_colors = ['#C9A84C' if i==len(top10_s)-1 else '#3A7D44' if i>=len(top10_s)-3 else '#1B4F8A'
                       for i in range(len(top10_s))]
-        bars = ax.barh(top10_s['player'], top10_s['win_title'],
-                       color=colors_bar, edgecolor='none', height=0.65)
-        ax.set_xlabel('Win Probability', color=USO_WHITE)
+        bars = ax.barh(top10_s['player'], top10_s['win_title'], color=bar_colors, edgecolor='none', height=0.6)
+        ax.set_xlim(0, top10_s['win_title'].max() * 1.3)
         ax.xaxis.set_major_formatter(mtick.PercentFormatter(1.0))
-        ax.tick_params(colors=USO_WHITE, labelsize=9)
-        ax.set_xlim(0, top10_s['win_title'].max() * 1.25)
-        for spine in ax.spines.values():
-            spine.set_visible(False)
-        ax.axvline(x=0, color=USO_BLUE_LITE+'40', linewidth=1)
         for bar, v in zip(bars, top10_s['win_title']):
-            ax.text(bar.get_width() + 0.003, bar.get_y() + bar.get_height()/2,
-                    f'{v:.1%}', va='center', color=USO_WHITE, fontsize=9, fontweight='bold')
-        fig = make_chart(fig)
+            ax.text(bar.get_width()+0.004, bar.get_y()+bar.get_height()/2,
+                    f'{v:.1%}', va='center', color='#F0F4F8', fontsize=9, fontweight='600')
         plt.tight_layout()
         st.pyplot(fig, transparent=True)
         plt.close()
 
-    st.markdown('<div class="court-divider"></div>', unsafe_allow_html=True)
-    st.markdown('<div class="section-header">⚡ Featured Statistics</div>', unsafe_allow_html=True)
-    f1, f2, f3 = st.columns(3)
-    with f1:
-        bh = ps.nlargest(1, 'hard_win_pct').iloc[0]
-        st.metric('🏅 Best Hard Court Win %', f"{bh['hard_win_pct']:.1%}", bh['player'])
-    with f2:
-        bf = ps.nlargest(1, 'recent_pct').iloc[0]
-        st.metric('🔥 Best Recent Form', f"{bf['recent_pct']:.1%}", bf['player'])
-    with f3:
-        bu = ps[ps['uw'] > 3].nlargest(1, 'uso_win_pct').iloc[0] if 'uw' in ps.columns and len(ps[ps['uw']>3])>0 else ps.nlargest(1,'uso_win_pct').iloc[0]
-        st.metric('🎾 Best US Open Win %', f"{bu['uso_win_pct']:.1%}", bu['player'])
+    st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="sec-title">Key Stats</div>', unsafe_allow_html=True)
+    f1,f2,f3 = st.columns(3)
+    bh = ps.nlargest(1,'hwp').iloc[0]
+    bf = ps.nlargest(1,'rfp').iloc[0]
+    bu = ps[ps['uw']>3].nlargest(1,'uwp').iloc[0] if 'uw' in ps.columns and len(ps[ps['uw']>3])>0 else ps.nlargest(1,'uwp').iloc[0]
+    with f1: st.metric('Best Hard Court %', f"{bh['hwp']:.1%}", bh['player'])
+    with f2: st.metric('Best Recent Form', f"{bf['rfp']:.1%}", bf['player'])
+    with f3: st.metric('Best US Open %', f"{bu['uwp']:.1%}", bu['player'])
 
-# ════════════════════════════════════════════════════════════════
+# ════════════════════════════════════
 # PLAYER COMPARISON
-# ════════════════════════════════════════════════════════════════
-elif '👤' in page:
-    st.markdown(f"""
-    <div class="hero-banner" style="padding:32px">
-        <div class="hero-title" style="font-size:2.5em">Player Comparison</div>
-        <div class="hero-subtitle">Head-to-Head Statistics</div>
-    </div>
-    """, unsafe_allow_html=True)
+# ════════════════════════════════════
+elif page == 'Player Comparison':
+    st.markdown("""
+    <div class="hero" style="padding:40px 48px">
+        <div class="hero-eyebrow">Head to Head</div>
+        <div class="hero-title" style="font-size:3.5em">Player Comparison</div>
+    </div>""", unsafe_allow_html=True)
 
-    c1, c2 = st.columns(2)
+    c1,c2 = st.columns(2)
     with c1:
         pa = st.selectbox('Player A', all_players,
-                          index=all_players.index('Jannik Sinner') if 'Jannik Sinner' in all_players else 0,
-                          key='cmp_a')
+                          index=all_players.index('Jannik Sinner') if 'Jannik Sinner' in all_players else 0)
     with c2:
         pb = st.selectbox('Player B', all_players,
-                          index=all_players.index('Carlos Alcaraz') if 'Carlos Alcaraz' in all_players else 1,
-                          key='cmp_b')
+                          index=all_players.index('Carlos Alcaraz') if 'Carlos Alcaraz' in all_players else 1)
 
     if pa and pb and pa != pb:
-        sa_df = ps[ps['player']==pa]
-        sb_df = ps[ps['player']==pb]
-        if len(sa_df) > 0 and len(sb_df) > 0:
+        sa_df = ps[ps['player']==pa]; sb_df = ps[ps['player']==pb]
+        if len(sa_df)>0 and len(sb_df)>0:
             sa = sa_df.iloc[0]; sb = sb_df.iloc[0]
-            ra = int(rm.get(pa, 999)); rb = int(rm.get(pb, 999))
-            fa = get_flag(pa); fb = get_flag(pb)
+            ra = int(rm.get(pa,999)); rb = int(rm.get(pb,999))
+            fa_f = flag(pa); fb_f = flag(pb)
 
-            st.markdown('<div class="court-divider"></div>', unsafe_allow_html=True)
-
-            c1, c2, c3 = st.columns([5, 2, 5])
+            st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+            c1,c2,c3 = st.columns([5,2,5])
             with c1:
-                st.markdown(f'<div class="player-name-big" style="color:{USO_BLUE_LITE}">{fa} {pa}</div>', unsafe_allow_html=True)
-                st.markdown(f'<div style="text-align:center;color:{USO_GOLD};font-size:1.1em;letter-spacing:2px;font-weight:600">ATP #{ra}</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="cmp-name" style="color:#4A90D9">{fa_f} {pa}</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="cmp-rank">ATP #{ra}</div>', unsafe_allow_html=True)
             with c2:
-                st.markdown(f'<div style="font-family:Bebas Neue,Impact,sans-serif;font-size:3em;text-align:center;color:{USO_WHITE};padding-top:8px">VS</div>', unsafe_allow_html=True)
+                st.markdown('<div style="font-family:Bebas Neue,Impact,sans-serif;font-size:2.8em;text-align:center;color:#475569;padding-top:12px">VS</div>', unsafe_allow_html=True)
             with c3:
-                st.markdown(f'<div class="player-name-big" style="color:#EF5350">{fb} {pb}</div>', unsafe_allow_html=True)
-                st.markdown(f'<div style="text-align:center;color:{USO_GOLD};font-size:1.1em;letter-spacing:2px;font-weight:600">ATP #{rb}</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="cmp-name" style="color:#EF5350">{fb_f} {pb}</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="cmp-rank">ATP #{rb}</div>', unsafe_allow_html=True)
 
-            st.markdown('<div class="court-divider"></div>', unsafe_allow_html=True)
+            st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
-            stats_list = [
-                ('Hard Court Win %', f"{sa['hard_win_pct']:.1%}", f"{sb['hard_win_pct']:.1%}", sa['hard_win_pct'] > sb['hard_win_pct']),
-                ('Recent Form (Last 10)', f"{sa['recent_pct']:.1%}", f"{sb['recent_pct']:.1%}", sa['recent_pct'] > sb['recent_pct']),
-                ('US Open Win %', f"{sa['uso_win_pct']:.1%}", f"{sb['uso_win_pct']:.1%}", sa['uso_win_pct'] > sb['uso_win_pct']),
-                ('Avg Aces / Match', f"{sa['avg_aces']:.1f}", f"{sb['avg_aces']:.1f}", sa['avg_aces'] > sb['avg_aces']),
-                ('Avg Double Faults', f"{sa['avg_df']:.1f}", f"{sb['avg_df']:.1f}", sa['avg_df'] < sb['avg_df']),
-                ('BP Save %', f"{sa['avg_bp_save']:.1%}", f"{sb['avg_bp_save']:.1%}", sa['avg_bp_save'] > sb['avg_bp_save']),
-                ('BP Conversion %', f"{sa['avg_bp_conv']:.1%}", f"{sb['avg_bp_conv']:.1%}", sa['avg_bp_conv'] > sb['avg_bp_conv']),
-                ('1st Serve %', f"{sa.get('avg_1st',0):.1%}", f"{sb.get('avg_1st',0):.1%}", sa.get('avg_1st',0) > sb.get('avg_1st',0)),
+            stats = [
+                ('Hard Court Win %', f"{sa['hwp']:.1%}", f"{sb['hwp']:.1%}", sa['hwp']>sb['hwp']),
+                ('Recent Form', f"{sa['rfp']:.1%}", f"{sb['rfp']:.1%}", sa['rfp']>sb['rfp']),
+                ('US Open Win %', f"{sa['uwp']:.1%}", f"{sb['uwp']:.1%}", sa['uwp']>sb['uwp']),
+                ('Avg Aces / Match', f"{sa['aces']:.1f}", f"{sb['aces']:.1f}", sa['aces']>sb['aces']),
+                ('Avg Double Faults', f"{sa['df']:.1f}", f"{sb['df']:.1f}", sa['df']<sb['df']),
+                ('BP Save %', f"{sa['bps']:.1%}", f"{sb['bps']:.1%}", sa['bps']>sb['bps']),
+                ('BP Conversion %', f"{sa['bpc']:.1%}", f"{sb['bpc']:.1%}", sa['bpc']>sb['bpc']),
+                ('1st Serve %', f"{sa.get('fsp',0):.1%}", f"{sb.get('fsp',0):.1%}", sa.get('fsp',0)>sb.get('fsp',0)),
             ]
-
-            for stat, va, vb, a_better in stats_list:
-                win_a = '✅' if a_better else ''
-                win_b = '✅' if not a_better else ''
+            for stat, va, vb, a_better in stats:
+                wa = '✓' if a_better else ''
+                wb = '✓' if not a_better else ''
                 st.markdown(f"""
-                <div class="stat-row">
-                    <div class="stat-val-a">{win_a} <b>{va}</b></div>
-                    <div class="stat-label-center">{stat}</div>
-                    <div class="stat-val-b"><b>{vb}</b> {win_b}</div>
-                </div>
-                """, unsafe_allow_html=True)
+                <div class="stat-line">
+                    <div class="sv-a" style="{'color:#5CB85C' if a_better else ''}">{wa} {va}</div>
+                    <div class="sv-lbl">{stat}</div>
+                    <div class="sv-b" style="{'color:#5CB85C' if not a_better else ''}">{vb} {wb}</div>
+                </div>""", unsafe_allow_html=True)
 
-            st.markdown('<div class="court-divider"></div>', unsafe_allow_html=True)
-            st.markdown('<div class="section-header">⚔️ Head-to-Head</div>', unsafe_allow_html=True)
-
+            st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+            st.markdown('<div class="sec-title">Head-to-Head Record</div>', unsafe_allow_html=True)
             h2h_a = len(atp[(atp['winner_name']==pa)&(atp['loser_name']==pb)])
             h2h_b = len(atp[(atp['winner_name']==pb)&(atp['loser_name']==pa)])
-            h2h_t = h2h_a + h2h_b
+            c1,c2,c3 = st.columns(3)
+            with c1: st.markdown(f'<div class="kpi-card"><div class="kpi-num" style="color:#4A90D9">{h2h_a}</div><div class="kpi-lbl">{pa.split()[-1]} wins</div></div>', unsafe_allow_html=True)
+            with c2: st.markdown(f'<div class="kpi-card"><div class="kpi-num">{h2h_a+h2h_b}</div><div class="kpi-lbl">Total Matches</div></div>', unsafe_allow_html=True)
+            with c3: st.markdown(f'<div class="kpi-card"><div class="kpi-num" style="color:#EF5350">{h2h_b}</div><div class="kpi-lbl">{pb.split()[-1]} wins</div></div>', unsafe_allow_html=True)
 
-            c1, c2, c3 = st.columns(3)
-            with c1:
-                st.markdown(f"""<div class="stat-card">
-                    <div class="stat-number" style="color:{USO_BLUE_LITE}">{h2h_a}</div>
-                    <div class="stat-label">{pa.split()[-1]} Wins</div>
-                </div>""", unsafe_allow_html=True)
-            with c2:
-                st.markdown(f"""<div class="stat-card">
-                    <div class="stat-number">{h2h_t}</div>
-                    <div class="stat-label">Total Matches</div>
-                </div>""", unsafe_allow_html=True)
-            with c3:
-                st.markdown(f"""<div class="stat-card">
-                    <div class="stat-number" style="color:#EF5350">{h2h_b}</div>
-                    <div class="stat-label">{pb.split()[-1]} Wins</div>
-                </div>""", unsafe_allow_html=True)
-
-# ════════════════════════════════════════════════════════════════
+# ════════════════════════════════════
 # MATCH PREDICTOR
-# ════════════════════════════════════════════════════════════════
-elif '🎯' in page:
-    st.markdown(f"""
-    <div class="hero-banner" style="padding:32px">
-        <div class="hero-title" style="font-size:2.5em">Match Predictor</div>
-        <div class="hero-subtitle">AI-Powered Match Outcome Prediction</div>
-    </div>
-    """, unsafe_allow_html=True)
+# ════════════════════════════════════
+elif page == 'Match Predictor':
+    st.markdown("""
+    <div class="hero" style="padding:40px 48px">
+        <div class="hero-eyebrow">AI Prediction</div>
+        <div class="hero-title" style="font-size:3.5em">Match Predictor</div>
+        <div class="hero-sub">Select two players to predict the match outcome</div>
+    </div>""", unsafe_allow_html=True)
 
-    c1, c2 = st.columns(2)
+    c1,c2 = st.columns(2)
     with c1:
         pa = st.selectbox('Player A', all_players,
-                          index=all_players.index('Jannik Sinner') if 'Jannik Sinner' in all_players else 0,
-                          key='p_a')
+                          index=all_players.index('Jannik Sinner') if 'Jannik Sinner' in all_players else 0, key='mp_a')
     with c2:
         pb = st.selectbox('Player B', all_players,
-                          index=all_players.index('Carlos Alcaraz') if 'Carlos Alcaraz' in all_players else 1,
-                          key='p_b')
-
+                          index=all_players.index('Carlos Alcaraz') if 'Carlos Alcaraz' in all_players else 1, key='mp_b')
     st.markdown('')
-    predict_btn = st.button('🎾  PREDICT MATCH WINNER', use_container_width=True)
+    btn = st.button('Predict Match Winner', use_container_width=True)
 
-    if predict_btn:
+    if btn:
         if pa == pb:
             st.warning('Please select two different players.')
         else:
-            prob_a, prob_b = pred(pa, pb, rf_m, FEAT, ps, rm)
+            prob_a, prob_b = predict(pa, pb, rf_m, F, ps, rm)
             winner = pa if prob_a > prob_b else pb
-            win_pct = max(prob_a, prob_b)
-            fa = get_flag(pa); fb = get_flag(pb)
-
-            st.markdown('<div class="court-divider"></div>', unsafe_allow_html=True)
+            fa_f = flag(pa); fb_f = flag(pb)
 
             st.markdown(f"""
-            <div class="winner-banner">
-                <div class="winner-label">🏆 Predicted Winner</div>
-                <div class="winner-name">{get_flag(winner)} {winner}</div>
-                <div style="color:{USO_GOLD};font-size:1.1em;font-weight:600;margin-top:8px">
-                    Win Probability: {win_pct:.1%}
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+            <div class="winner-box">
+                <div class="winner-tag">🏆 Predicted Winner</div>
+                <div class="winner-nm">{flag(winner)} {winner}</div>
+                <div class="winner-prob">Win probability: {max(prob_a,prob_b):.1%}</div>
+            </div>""", unsafe_allow_html=True)
 
-            c1, c2, c3 = st.columns([5, 2, 5])
+            st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+            c1,c2,c3 = st.columns([5,2,5])
             with c1:
-                st.markdown(f'<div class="prob-big" style="color:{USO_BLUE_LITE}">{prob_a:.1%}</div>', unsafe_allow_html=True)
-                st.markdown(f'<div class="player-name-big" style="color:{USO_BLUE_LITE};font-size:1.6em">{fa} {pa}</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="prob-display" style="color:#4A90D9">{prob_a:.1%}</div>', unsafe_allow_html=True)
+                st.markdown(f'<div style="text-align:center;font-weight:600;color:#94A3B8;margin-top:8px">{fa_f} {pa}</div>', unsafe_allow_html=True)
                 st.progress(prob_a)
             with c2:
-                st.markdown(f'<div style="font-family:Bebas Neue,Impact;font-size:2.5em;text-align:center;color:{USO_WHITE};padding-top:16px">VS</div>', unsafe_allow_html=True)
+                st.markdown('<div style="font-family:Bebas Neue,Impact,sans-serif;font-size:2.5em;text-align:center;color:#334155;padding-top:16px">VS</div>', unsafe_allow_html=True)
             with c3:
-                st.markdown(f'<div class="prob-big" style="color:#EF5350">{prob_b:.1%}</div>', unsafe_allow_html=True)
-                st.markdown(f'<div class="player-name-big" style="color:#EF5350;font-size:1.6em">{fb} {pb}</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="prob-display" style="color:#EF5350">{prob_b:.1%}</div>', unsafe_allow_html=True)
+                st.markdown(f'<div style="text-align:center;font-weight:600;color:#94A3B8;margin-top:8px">{fb_f} {pb}</div>', unsafe_allow_html=True)
                 st.progress(prob_b)
 
-            st.markdown('<div class="court-divider"></div>', unsafe_allow_html=True)
-            st.markdown('<div class="section-header">🔑 Key Factors</div>', unsafe_allow_html=True)
-
+            st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+            st.markdown('<div class="sec-title">Key Factors</div>', unsafe_allow_html=True)
             sa = ps[ps['player']==pa].iloc[0] if len(ps[ps['player']==pa])>0 else None
             sb = ps[ps['player']==pb].iloc[0] if len(ps[ps['player']==pb])>0 else None
-            ra = rm.get(pa, 999); rb = rm.get(pb, 999)
-
+            ra = rm.get(pa,999); rb = rm.get(pb,999)
             if sa is not None and sb is not None:
                 factors = [
-                    ('ATP Ranking', f'#{int(ra)}', f'#{int(rb)}', ra < rb),
-                    ('Hard Court Win %', f"{sa['hard_win_pct']:.1%}", f"{sb['hard_win_pct']:.1%}", sa['hard_win_pct'] > sb['hard_win_pct']),
-                    ('Recent Form', f"{sa['recent_pct']:.1%}", f"{sb['recent_pct']:.1%}", sa['recent_pct'] > sb['recent_pct']),
-                    ('BP Save %', f"{sa['avg_bp_save']:.1%}", f"{sb['avg_bp_save']:.1%}", sa['avg_bp_save'] > sb['avg_bp_save']),
+                    ('ATP Ranking', f'#{int(ra)}', f'#{int(rb)}', ra<rb),
+                    ('Hard Court Win %', f"{sa['hwp']:.1%}", f"{sb['hwp']:.1%}", sa['hwp']>sb['hwp']),
+                    ('Recent Form', f"{sa['rfp']:.1%}", f"{sb['rfp']:.1%}", sa['rfp']>sb['rfp']),
+                    ('BP Save %', f"{sa['bps']:.1%}", f"{sb['bps']:.1%}", sa['bps']>sb['bps']),
                 ]
                 for factor, va, vb, a_wins in factors:
-                    wa = '✅' if a_wins else ''
-                    wb = '✅' if not a_wins else ''
+                    wa = '✓' if a_wins else ''
+                    wb = '✓' if not a_wins else ''
                     st.markdown(f"""
-                    <div class="stat-row">
-                        <div class="stat-val-a">{wa} <b>{va}</b></div>
-                        <div class="stat-label-center">{factor}</div>
-                        <div class="stat-val-b"><b>{vb}</b> {wb}</div>
-                    </div>
-                    """, unsafe_allow_html=True)
+                    <div class="stat-line">
+                        <div class="sv-a" style="{'color:#5CB85C' if a_wins else ''}">{wa} {va}</div>
+                        <div class="sv-lbl">{factor}</div>
+                        <div class="sv-b" style="{'color:#5CB85C' if not a_wins else ''}">{vb} {wb}</div>
+                    </div>""", unsafe_allow_html=True)
 
-# ════════════════════════════════════════════════════════════════
+# ════════════════════════════════════
 # TOURNAMENT PREDICTION
-# ════════════════════════════════════════════════════════════════
-elif '🏆' in page:
-    st.markdown(f"""
-    <div class="hero-banner" style="padding:32px">
-        <div class="hero-title" style="font-size:2.5em">Tournament Prediction</div>
-        <div class="hero-subtitle">US Open 2026 — Round-by-Round Probabilities</div>
-    </div>
-    """, unsafe_allow_html=True)
+# ════════════════════════════════════
+elif page == 'Tournament Prediction':
+    st.markdown("""
+    <div class="hero" style="padding:40px 48px">
+        <div class="hero-eyebrow">Simulation · 1,000 runs</div>
+        <div class="hero-title" style="font-size:3em">Tournament Prediction</div>
+        <div class="hero-sub">Round-by-round probabilities for every player in the draw</div>
+    </div>""", unsafe_allow_html=True)
 
     top10 = tourney.head(10).reset_index(drop=True)
-    medals = ['🥇','🥈','🥉','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣','🔟']
+    medals = ['1','2','3','4','5','6','7','8','9','10']
 
-    st.markdown('<div class="section-header">🏆 Top 10 Contenders</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sec-title">Top 10 Contenders</div>', unsafe_allow_html=True)
+    c1,c2 = st.columns([1,1])
 
-    c1, c2 = st.columns([1, 1])
     with c1:
         for i, row in top10.iterrows():
-            flag = get_flag(row['player'])
             st.markdown(f"""
-            <div class="player-card">
-                <div class="player-rank">{medals[i]}</div>
-                <div class="player-flag">{flag}</div>
-                <div class="player-name">{row['player']}<br>
-                    <span style="font-size:0.8em;color:{USO_GOLD};font-weight:400">
-                    Final: {row['reach_final']:.1%} &nbsp;|&nbsp;
-                    Semis: {row['reach_semis']:.1%} &nbsp;|&nbsp;
-                    QF: {row['reach_qtrs']:.1%}
+            <div class="p-row">
+                <div class="p-pos">{medals[i]}</div>
+                <div class="p-flag">{flag(row['player'])}</div>
+                <div class="p-name">
+                    {row['player']}
+                    <span style="display:block;font-size:0.75em;color:#64748B;font-weight:400;margin-top:2px">
+                    Final {row['reach_final']:.1%} &nbsp;·&nbsp; Semis {row['reach_semis']:.1%} &nbsp;·&nbsp; QF {row['reach_qtrs']:.1%}
                     </span>
                 </div>
-                <div class="player-prob">{row['win_title']:.1%}</div>
-            </div>
-            """, unsafe_allow_html=True)
+                <div class="p-pct">{row['win_title']:.1%}</div>
+            </div>""", unsafe_allow_html=True)
 
     with c2:
-        fig, ax = plt.subplots(figsize=(7, 7))
-        rounds = ['reach_qtrs','reach_semis','reach_final','win_title']
-        labels = ['Quarter-Finals','Semi-Finals','Final','Title']
-        colors = [USO_BLUE_LITE+'80', USO_BLUE_LITE, USO_GREEN, USO_GOLD]
-        x = np.arange(len(top10))
-        w = 0.2
-        for i, (r, label, color) in enumerate(zip(rounds, labels, colors)):
-            ax.bar(x+i*w, top10[r], w, label=label, color=color, edgecolor='none')
+        fig, ax = mk_chart()
+        fig.set_size_inches(7, 7)
+        rounds  = ['reach_qtrs','reach_semis','reach_final','win_title']
+        labels  = ['Quarter-Finals','Semi-Finals','Final','Title']
+        colors  = ['#1B4F8A50','#1B4F8A','#3A7D44','#C9A84C']
+        x = np.arange(len(top10)); w = 0.2
+        for i,(r,lbl,col) in enumerate(zip(rounds,labels,colors)):
+            ax.bar(x+i*w, top10[r], w, label=lbl, color=col, edgecolor='none')
         ax.set_xticks(x+w*1.5)
         ax.set_xticklabels([p.split()[-1] for p in top10['player']],
-                           rotation=35, ha='right', color=USO_WHITE, fontsize=8)
-        ax.set_ylabel('Probability', color=USO_WHITE)
+                           rotation=35, ha='right', color='#94A3B8', fontsize=8)
         ax.yaxis.set_major_formatter(mtick.PercentFormatter(1.0))
-        ax.legend(fontsize=8, facecolor=USO_BLUE, labelcolor=USO_WHITE,
-                  edgecolor=USO_BLUE_LITE+'40', loc='upper right')
-        ax.tick_params(colors=USO_WHITE)
-        for spine in ax.spines.values():
-            spine.set_visible(False)
-        fig = make_chart(fig)
+        ax.tick_params(colors='#94A3B8')
+        ax.legend(fontsize=8, facecolor='#0D2137', labelcolor='#94A3B8',
+                  edgecolor='#1B4F8A30', loc='upper right')
         plt.tight_layout()
         st.pyplot(fig, transparent=True)
         plt.close()
 
-    st.markdown('<div class="court-divider"></div>', unsafe_allow_html=True)
-    st.markdown('<div class="section-header">📋 Full Predictions Table</div>', unsafe_allow_html=True)
-
+    st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="sec-title">Full Draw Predictions</div>', unsafe_allow_html=True)
     disp = tourney.copy()
     disp['win_title']   = disp['win_title'].apply(lambda x: f'{x:.1%}')
     disp['reach_final'] = disp['reach_final'].apply(lambda x: f'{x:.1%}')
     disp['reach_semis'] = disp['reach_semis'].apply(lambda x: f'{x:.1%}')
     disp['reach_qtrs']  = disp['reach_qtrs'].apply(lambda x: f'{x:.1%}')
     disp.columns = ['Player','Win Title','Reach Final','Reach Semis','Reach QF']
-    disp.index   = range(1, len(disp)+1)
-    st.dataframe(disp, use_container_width=True, height=400)
-
+    disp.index = range(1, len(disp)+1)
+    st.dataframe(disp, use_container_width=True, height=420)
