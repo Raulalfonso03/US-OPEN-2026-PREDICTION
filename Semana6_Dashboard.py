@@ -17,500 +17,482 @@ st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; }
+
 html, body, [class*="css"], .stApp {
     font-family: 'Inter', sans-serif !important;
-    background: #04111F !important;
-    color: #F1F5F9 !important;
+    background: #050E1A !important;
+    color: #E2E8F0 !important;
 }
+
 #MainMenu, footer, header { visibility: hidden !important; }
 .block-container { padding: 0 !important; max-width: 100% !important; }
 section[data-testid="stSidebar"] { display: none !important; }
 
-/* NAV */
+/* ── NAVBAR ── */
 .navbar {
-    background: rgba(4,17,31,0.95);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    padding: 0 48px;
-    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    background: rgba(5,14,26,0.96);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    padding: 0 64px;
+    height: 72px;
 }
-.nav-brand {
+.nav-logo {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.5em;
-    letter-spacing: 4px;
-    color: #FFFFFF;
+    font-size: 1.6em;
+    letter-spacing: 5px;
+    color: #fff;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
-.nav-dot {
+.nav-live {
     width: 8px; height: 8px;
     background: #22C55E;
     border-radius: 50%;
-    animation: pulse 2s infinite;
+    box-shadow: 0 0 0 0 rgba(34,197,94,0.4);
+    animation: ripple 2s infinite;
 }
-@keyframes pulse {
-    0%,100% { opacity:1; transform:scale(1); }
-    50% { opacity:0.5; transform:scale(1.3); }
+@keyframes ripple {
+    0%   { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); }
+    70%  { box-shadow: 0 0 0 8px rgba(34,197,94,0); }
+    100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
 }
-.nav-tag {
-    font-size: 0.65em;
-    color: #C9A84C;
-    letter-spacing: 3px;
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
+.nav-city {
+    font-size: 0.75em;
+    color: #475569;
+    font-weight: 500;
+    letter-spacing: 2px;
 }
 
-/* HERO */
+/* ── HERO ── */
 .hero {
-    background: linear-gradient(135deg, #061829 0%, #0A2E1A 40%, #061A30 80%, #04111F 100%);
-    padding: 100px 80px 80px;
-    position: relative;
-    overflow: hidden;
+    min-height: 520px;
+    background:
+        radial-gradient(ellipse at 80% 50%, rgba(34,197,94,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse at 20% 80%, rgba(14,116,144,0.07) 0%, transparent 60%),
+        linear-gradient(160deg, #061525 0%, #050E1A 100%);
+    padding: 96px 80px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     border-bottom: 1px solid rgba(255,255,255,0.04);
 }
-.hero::before {
-    content: '';
-    position: absolute;
-    top: -200px; right: -200px;
-    width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(34,197,94,0.08) 0%, transparent 70%);
-    pointer-events: none;
-}
-.hero::after {
-    content: '';
-    position: absolute;
-    bottom: -100px; left: -100px;
-    width: 400px; height: 400px;
-    background: radial-gradient(circle, rgba(14,116,144,0.08) 0%, transparent 70%);
-    pointer-events: none;
-}
-.hero-tag {
+.hero-eyebrow {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: rgba(34,197,94,0.1);
-    border: 1px solid rgba(34,197,94,0.2);
+    background: rgba(34,197,94,0.08);
+    border: 1px solid rgba(34,197,94,0.18);
     color: #22C55E;
-    padding: 6px 16px;
+    padding: 7px 18px;
     border-radius: 100px;
-    font-size: 0.75em;
-    font-weight: 600;
-    letter-spacing: 1px;
+    font-size: 0.72em;
+    font-weight: 700;
+    letter-spacing: 2px;
     text-transform: uppercase;
-    margin-bottom: 24px;
+    margin-bottom: 28px;
+    width: fit-content;
 }
 .hero-h1 {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 7em;
-    letter-spacing: 8px;
-    color: #FFFFFF;
+    font-size: 8em;
+    letter-spacing: 10px;
+    color: #fff;
     line-height: 0.85;
-    margin-bottom: 24px;
+    margin-bottom: 28px;
 }
-.hero-h1 span { color: #22C55E; }
-.hero-p {
-    font-size: 1.1em;
+.hero-h1 em { color: #22C55E; font-style: normal; }
+.hero-desc {
+    font-size: 1.05em;
     color: #64748B;
-    max-width: 480px;
-    line-height: 1.7;
+    max-width: 440px;
+    line-height: 1.8;
     font-weight: 400;
-    margin-bottom: 40px;
+    margin-bottom: 56px;
 }
-.hero-stats {
+.hero-numbers {
     display: flex;
-    gap: 48px;
-    padding-top: 16px;
-    border-top: 1px solid rgba(255,255,255,0.06);
+    gap: 56px;
+    padding-top: 32px;
+    border-top: 1px solid rgba(255,255,255,0.05);
 }
-.hero-stat-num {
+.hero-num { }
+.hero-num-val {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 2.2em;
-    color: #FFFFFF;
+    font-size: 2.4em;
+    color: #fff;
     line-height: 1;
 }
-.hero-stat-lbl {
-    font-size: 0.72em;
-    color: #475569;
+.hero-num-lbl {
+    font-size: 0.7em;
+    color: #334155;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
-    font-weight: 600;
-    margin-top: 4px;
+    letter-spacing: 2px;
+    font-weight: 700;
+    margin-top: 6px;
 }
 
-/* SECTION */
-.section { padding: 60px 80px; }
-.section-sm { padding: 40px 80px; }
-.s-header {
-    display: flex;
-    align-items: baseline;
-    gap: 16px;
-    margin-bottom: 32px;
+/* ── PAGE CONTENT ── */
+.page { padding: 72px 80px; }
+.page-header {
+    margin-bottom: 48px;
 }
-.s-title {
+.page-title {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 2em;
-    letter-spacing: 3px;
-    color: #FFFFFF;
+    font-size: 2.8em;
+    letter-spacing: 4px;
+    color: #fff;
+    line-height: 1;
+    margin-bottom: 8px;
 }
-.s-sub { font-size: 0.85em; color: #475569; font-weight: 500; }
+.page-desc { font-size: 0.9em; color: #475569; font-weight: 500; }
 
-/* CONTENDER CARDS */
-.contender-grid {
+/* ── CONTENDER GRID ── */
+.c-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 16px;
+    gap: 20px;
+    margin-top: 8px;
 }
 .c-card {
     background: #0A1929;
     border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 16px;
-    padding: 24px 20px;
+    border-radius: 20px;
+    padding: 28px 24px;
     position: relative;
     overflow: hidden;
-    transition: all 0.2s;
+    transition: transform 0.2s, border-color 0.2s;
+    cursor: default;
 }
 .c-card:hover {
-    border-color: rgba(34,197,94,0.2);
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    border-color: rgba(34,197,94,0.15);
 }
-.c-card.gold { border-color: rgba(201,168,76,0.3); }
-.c-card.gold::before {
-    content: '';
+.c-accent {
     position: absolute;
     top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #C9A84C, #F0C060);
+    height: 3px;
 }
-.c-card.silver::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #94A3B8, #CBD5E1);
-}
-.c-card.bronze::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #B45309, #D97706);
-}
-.c-pos {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 0.9em;
+.c-rank {
+    font-size: 0.68em;
+    font-weight: 700;
     letter-spacing: 2px;
+    text-transform: uppercase;
     color: #334155;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
 }
-.c-flag { font-size: 1.8em; margin-bottom: 8px; display: block; }
+.c-flag { font-size: 2em; display: block; margin-bottom: 10px; }
 .c-name {
     font-size: 0.9em;
     font-weight: 700;
     color: #F1F5F9;
-    margin-bottom: 16px;
     line-height: 1.3;
+    margin-bottom: 20px;
+    min-height: 36px;
 }
-.c-prob {
+.c-pct {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 2.2em;
+    font-size: 2.6em;
     color: #22C55E;
     line-height: 1;
 }
-.c-prob-lbl {
+.c-pct-lbl {
     font-size: 0.65em;
-    color: #475569;
+    color: #334155;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 600;
-    margin-top: 2px;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    margin-top: 3px;
 }
 .c-bar {
     height: 3px;
-    background: rgba(255,255,255,0.05);
+    background: rgba(255,255,255,0.04);
     border-radius: 2px;
-    margin-top: 16px;
+    margin-top: 20px;
     overflow: hidden;
 }
 .c-bar-fill {
     height: 100%;
     border-radius: 2px;
-    background: linear-gradient(90deg, #22C55E, #16A34A);
+    background: linear-gradient(90deg, #22C55E 0%, #16A34A 100%);
 }
 
-/* PAGE TABS */
-.tab-bar {
-    display: flex;
-    gap: 4px;
-    background: #0A1929;
-    padding: 6px;
-    border-radius: 12px;
-    width: fit-content;
-    margin: 0 80px 48px;
-}
-.tab-btn {
-    padding: 10px 24px;
-    border-radius: 8px;
-    font-size: 0.85em;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    transition: all 0.2s;
-    color: #64748B;
-    background: transparent;
-    border: none;
-}
-.tab-btn.active {
-    background: #0D2137;
-    color: #FFFFFF;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-}
-
-/* COMPARISON */
-.cmp-wrap {
+/* ── COMPARISON ── */
+.cmp-box {
     background: #0A1929;
     border: 1px solid rgba(255,255,255,0.05);
     border-radius: 20px;
     overflow: hidden;
+    margin-top: 32px;
 }
-.cmp-header {
+.cmp-top {
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    grid-template-columns: 1fr 120px 1fr;
     align-items: center;
-    padding: 40px 48px;
-    background: linear-gradient(135deg, #061829, #0D2137);
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding: 48px;
+    background: linear-gradient(135deg, #07192B, #0D2137);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
 }
-.cmp-player { text-align: center; }
-.cmp-player-name {
+.cmp-p { text-align: center; }
+.cmp-p-flag { font-size: 2.4em; margin-bottom: 12px; }
+.cmp-p-name {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 2.4em;
+    font-size: 2.2em;
     letter-spacing: 2px;
     line-height: 1;
     margin-bottom: 8px;
 }
-.cmp-player-rank {
-    font-size: 0.75em;
-    font-weight: 600;
+.cmp-p-rank {
+    font-size: 0.72em;
+    color: #C9A84C;
+    font-weight: 700;
     letter-spacing: 2px;
     text-transform: uppercase;
-    color: #C9A84C;
 }
 .cmp-vs {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 2.5em;
+    font-size: 2em;
     color: #1E293B;
-    padding: 0 32px;
+    text-align: center;
 }
-.stat-block {
+.stat-row {
     display: grid;
     grid-template-columns: 1fr 200px 1fr;
     align-items: center;
-    padding: 18px 48px;
-    border-bottom: 1px solid rgba(255,255,255,0.03);
+    padding: 20px 48px;
+    border-bottom: 1px solid rgba(255,255,255,0.025);
+    transition: background 0.15s;
 }
-.stat-block:hover { background: rgba(255,255,255,0.01); }
-.sv { font-size: 1.05em; font-weight: 700; }
-.sv-left { text-align: right; padding-right: 24px; }
-.sv-right { text-align: left; padding-left: 24px; }
-.stat-name {
-    font-size: 0.72em;
-    color: #475569;
+.stat-row:last-child { border-bottom: none; }
+.stat-row:hover { background: rgba(255,255,255,0.015); }
+.stat-v {
+    font-size: 1.05em;
+    font-weight: 700;
+}
+.stat-v-l { text-align: right; padding-right: 24px; }
+.stat-v-r { text-align: left;  padding-left: 24px; }
+.stat-n {
+    font-size: 0.7em;
+    color: #334155;
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    font-weight: 600;
+    font-weight: 700;
     text-align: center;
 }
-.win { color: #22C55E !important; }
-.lose { color: #334155 !important; }
+.s-win  { color: #22C55E !important; }
+.s-lose { color: #1E293B !important; }
 
-/* PREDICTOR */
-.pred-result {
-    background: linear-gradient(135deg, #052010 0%, #0A1929 100%);
-    border: 1px solid rgba(34,197,94,0.15);
+/* ── PREDICTOR ── */
+.pred-winner-box {
+    background: linear-gradient(135deg, #041910 0%, #071F2A 50%, #050E1A 100%);
+    border: 1px solid rgba(34,197,94,0.12);
     border-radius: 20px;
-    padding: 48px;
+    padding: 56px 48px;
     text-align: center;
     margin: 32px 0;
 }
-.pred-label {
-    font-size: 0.72em;
+.pred-tag {
+    font-size: 0.68em;
     color: #22C55E;
     letter-spacing: 4px;
-    text-transform: uppercase;
     font-weight: 700;
-    margin-bottom: 16px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
 }
-.pred-winner {
+.pred-name {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 4em;
-    letter-spacing: 4px;
-    color: #FFFFFF;
-    margin-bottom: 12px;
+    font-size: 5em;
+    letter-spacing: 5px;
+    color: #fff;
+    line-height: 1;
+    margin-bottom: 14px;
 }
-.pred-pct {
-    font-size: 1em;
+.pred-prob-lbl {
+    font-size: 0.85em;
     color: #22C55E;
     font-weight: 600;
     letter-spacing: 1px;
 }
-.prob-row {
+.prob-split {
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    gap: 24px;
+    grid-template-columns: 1fr 80px 1fr;
     align-items: center;
-    margin-top: 40px;
+    gap: 0;
+    margin: 40px 0;
 }
-.prob-side { text-align: center; }
-.prob-pct-big {
+.prob-side { text-align: center; padding: 0 32px; }
+.prob-big {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 4.5em;
+    font-size: 5em;
     line-height: 1;
+    margin-bottom: 8px;
 }
-.prob-name { font-size: 0.85em; color: #64748B; font-weight: 600; margin-top: 8px; }
+.prob-player-name {
+    font-size: 0.85em;
+    color: #64748B;
+    font-weight: 600;
+}
 .prob-bar-wrap {
-    height: 6px;
-    background: rgba(255,255,255,0.05);
-    border-radius: 3px;
-    margin-top: 12px;
+    height: 4px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 2px;
+    margin-top: 14px;
     overflow: hidden;
 }
-.prob-bar { height: 100%; border-radius: 3px; }
-.prob-vs {
+.prob-bar-fill { height: 100%; border-radius: 2px; }
+.prob-sep {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.8em;
+    font-size: 1.6em;
     color: #1E293B;
+    text-align: center;
 }
-
-/* FACTOR CARDS */
-.factor-grid {
+.factors-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-top: 24px;
+    gap: 16px;
+    margin-top: 32px;
 }
 .factor-card {
     background: #0A1929;
-    border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 12px;
-    padding: 20px 16px;
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 14px;
+    padding: 22px 18px;
     text-align: center;
 }
-.factor-lbl {
-    font-size: 0.68em;
-    color: #475569;
+.factor-title {
+    font-size: 0.65em;
+    color: #334155;
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    font-weight: 600;
-    margin-bottom: 12px;
+    font-weight: 700;
+    margin-bottom: 14px;
 }
 .factor-vals {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
     gap: 8px;
 }
 .factor-val { font-size: 1em; font-weight: 700; }
-.factor-sep { font-size: 0.7em; color: #334155; }
+.factor-dot { font-size: 0.6em; color: #1E293B; }
 
-/* TOURNAMENT TABLE */
-.tourn-table {
+/* ── TOURNAMENT TABLE ── */
+.t-table {
     background: #0A1929;
     border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 16px;
+    border-radius: 20px;
     overflow: hidden;
 }
-.tourn-thead {
+.t-head {
     display: grid;
-    grid-template-columns: 48px 1fr 120px 120px 120px 120px;
-    padding: 16px 24px;
-    background: rgba(255,255,255,0.02);
+    grid-template-columns: 60px 1fr 130px 130px 130px 130px;
+    padding: 18px 32px;
     border-bottom: 1px solid rgba(255,255,255,0.04);
+    background: rgba(255,255,255,0.02);
 }
-.tourn-th {
-    font-size: 0.68em;
-    color: #475569;
+.t-th {
+    font-size: 0.65em;
+    color: #334155;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 2px;
     font-weight: 700;
     text-align: center;
 }
-.tourn-th:nth-child(2) { text-align: left; }
-.tourn-row {
+.t-th:nth-child(2) { text-align: left; }
+.t-row {
     display: grid;
-    grid-template-columns: 48px 1fr 120px 120px 120px 120px;
-    padding: 16px 24px;
-    border-bottom: 1px solid rgba(255,255,255,0.03);
+    grid-template-columns: 60px 1fr 130px 130px 130px 130px;
+    padding: 18px 32px;
+    border-bottom: 1px solid rgba(255,255,255,0.025);
     align-items: center;
     transition: background 0.15s;
 }
-.tourn-row:hover { background: rgba(255,255,255,0.02); }
-.tourn-row:last-child { border-bottom: none; }
-.tourn-pos {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.1em;
-    color: #334155;
-    text-align: center;
-}
-.tourn-pos.top3 { color: #C9A84C; }
-.tourn-player { display: flex; align-items: center; gap: 10px; }
-.tourn-flag { font-size: 1.1em; }
-.tourn-name { font-size: 0.9em; font-weight: 600; color: #F1F5F9; }
-.tourn-val {
+.t-row:last-child { border-bottom: none; }
+.t-row:hover { background: rgba(255,255,255,0.015); }
+.t-pos {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 1.2em;
+    color: #1E293B;
     text-align: center;
 }
-.tourn-val.hi { color: #22C55E; }
-.tourn-val.mid { color: #94A3B8; }
-.tourn-val.lo { color: #334155; }
+.t-pos.hi { color: #C9A84C; }
+.t-player { display: flex; align-items: center; gap: 12px; }
+.t-flag { font-size: 1.2em; }
+.t-name { font-size: 0.88em; font-weight: 600; color: #E2E8F0; }
+.t-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.15em;
+    text-align: center;
+}
+.t-hi  { color: #22C55E; }
+.t-mid { color: #64748B; }
+.t-lo  { color: #1E293B; }
 
-/* SELECT styling */
+/* ── INPUTS ── */
+div[data-testid="stSelectbox"] label {
+    font-size: 0.7em !important;
+    font-weight: 700 !important;
+    color: #334155 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 2px !important;
+}
 div[data-testid="stSelectbox"] > div > div {
     background: #0A1929 !important;
-    border: 1px solid rgba(255,255,255,0.08) !important;
-    border-radius: 10px !important;
-    color: #F1F5F9 !important;
-}
-div[data-testid="stSelectbox"] label {
-    color: #475569 !important;
-    font-size: 0.72em !important;
-    font-weight: 700 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 1.5px !important;
+    border: 1px solid rgba(255,255,255,0.07) !important;
+    border-radius: 12px !important;
+    color: #E2E8F0 !important;
+    font-size: 0.95em !important;
 }
 
-/* BUTTON */
+/* ── BUTTON ── */
 .stButton > button {
     background: #22C55E !important;
-    color: #04111F !important;
+    color: #050E1A !important;
     border: none !important;
-    border-radius: 10px !important;
+    border-radius: 12px !important;
     font-weight: 800 !important;
-    font-size: 0.85em !important;
-    letter-spacing: 2px !important;
+    font-size: 0.82em !important;
+    letter-spacing: 3px !important;
     text-transform: uppercase !important;
-    padding: 14px 40px !important;
+    padding: 16px 40px !important;
     width: 100% !important;
+    transition: all 0.2s !important;
 }
 .stButton > button:hover {
     background: #16A34A !important;
+    box-shadow: 0 8px 32px rgba(34,197,94,0.2) !important;
     transform: translateY(-1px) !important;
-    box-shadow: 0 8px 24px rgba(34,197,94,0.25) !important;
 }
 
-/* RADIO as tab */
-div[data-testid="stHorizontalBlock"] { gap: 0 !important; }
+/* ── DIVIDER ── */
+.div { height: 1px; background: rgba(255,255,255,0.04); margin: 0 80px; }
+
+/* ── SECTION LABEL ── */
+.sec-label {
+    font-size: 0.68em;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #22C55E;
+    margin-bottom: 10px;
+}
+.sec-h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.2em;
+    letter-spacing: 4px;
+    color: #fff;
+    margin-bottom: 6px;
+}
+.sec-sub { font-size: 0.85em; color: #475569; }
 </style>
 """, unsafe_allow_html=True)
-
 
 # ── DATA ─────────────────────────────────────────────────────────
 @st.cache_data
@@ -522,22 +504,23 @@ def load():
         t   = pd.read_csv('tournament_predictions_uso2026.csv')
         return atp, uso, ml, t
     except FileNotFoundError as e:
-        st.error(f'Missing file: {e}')
+        st.error(f'⚠️  Missing file: {e}')
         st.stop()
 
 @st.cache_data
-def stats(_atp, _uso):
+def calc_stats(_atp, _uso):
     hard = _atp[_atp['surface']=='Hard'].copy()
     for c in ['w_ace','w_df','w_svpt','w_1stIn','w_bpSaved','w_bpFaced','l_bpSaved','l_bpFaced']:
-        if c in hard.columns: hard[c] = pd.to_numeric(hard[c], errors='coerce')
-    hard['bps'] = np.where(hard['w_bpFaced']>0, hard['w_bpSaved']/hard['w_bpFaced'], np.nan)
-    hard['bpc'] = np.where(hard['l_bpFaced']>0, (hard['l_bpFaced']-hard['l_bpSaved'])/hard['l_bpFaced'], np.nan)
-    hard['fsp'] = np.where(hard['w_svpt']>0, hard['w_1stIn']/hard['w_svpt'], np.nan)
-    hw = hard.groupby('winner_name').size().rename('hw')
-    hl = hard.groupby('loser_name').size().rename('hl')
-    hs = pd.concat([hw,hl],axis=1).fillna(0); hs['ht']=hs['hw']+hs['hl']; hs['hwp']=hs['hw']/hs['ht']
-    hs = hs.reset_index().rename(columns={'index':'player'}); hs = hs[hs['ht']>=20]
-    sv = hard.groupby('winner_name').agg(aces=('w_ace','mean'),df=('w_df','mean'),bps=('bps','mean'),bpc=('bpc','mean'),fsp=('fsp','mean')).reset_index().rename(columns={'winner_name':'player'})
+        if c in hard.columns: hard[c]=pd.to_numeric(hard[c],errors='coerce')
+    hard['bps']=np.where(hard['w_bpFaced']>0,hard['w_bpSaved']/hard['w_bpFaced'],np.nan)
+    hard['bpc']=np.where(hard['l_bpFaced']>0,(hard['l_bpFaced']-hard['l_bpSaved'])/hard['l_bpFaced'],np.nan)
+    hard['fsp']=np.where(hard['w_svpt']>0,hard['w_1stIn']/hard['w_svpt'],np.nan)
+    hw=hard.groupby('winner_name').size().rename('hw')
+    hl=hard.groupby('loser_name').size().rename('hl')
+    hs=pd.concat([hw,hl],axis=1).fillna(0)
+    hs['ht']=hs['hw']+hs['hl']; hs['hwp']=hs['hw']/hs['ht']
+    hs=hs.reset_index().rename(columns={'index':'player'}); hs=hs[hs['ht']>=20]
+    sv=hard.groupby('winner_name').agg(aces=('w_ace','mean'),df=('w_df','mean'),bps=('bps','mean'),bpc=('bpc','mean'),fsp=('fsp','mean')).reset_index().rename(columns={'winner_name':'player'})
     uw=_uso.groupby('winner_name').size().rename('uw'); ul=_uso.groupby('loser_name').size().rename('ul')
     us=pd.concat([uw,ul],axis=1).fillna(0); us['ut']=us['uw']+us['ul']; us['uwp']=us['uw']/us['ut']
     us=us.reset_index().rename(columns={'index':'player'})
@@ -547,7 +530,7 @@ def stats(_atp, _uso):
     am['tourney_date']=pd.to_datetime(am['tourney_date'],errors='coerce')
     am=am.sort_values(['player','tourney_date'])
     tm=am.groupby('player').size().reset_index(name='tm')
-    rf=(am.groupby('player').tail(10).groupby('player')['r'].agg(rw='sum',rt='count').reset_index())
+    rf=am.groupby('player').tail(10).groupby('player')['r'].agg(rw='sum',rt='count').reset_index()
     rf=rf.merge(tm,on='player'); rf=rf[rf['tm']>=50]; rf['rfp']=rf['rw']/rf['rt']
     ps=hs.merge(sv,on='player',how='left').merge(rf[['player','rfp']],on='player',how='left').merge(us[['player','uw','uwp']],on='player',how='left')
     ps['uwp']=ps['uwp'].fillna(0.5); ps['rfp']=ps['rfp'].fillna(0.5)
@@ -559,7 +542,7 @@ def stats(_atp, _uso):
     return pd.concat([ps,ex],ignore_index=True)
 
 @st.cache_resource
-def model(_atp, _ps):
+def train(_atp, _ps):
     hard=_atp[_atp['surface']=='Hard'].copy()
     for c in ['w_ace','w_df','w_svpt','w_1stIn','w_bpSaved','w_bpFaced','l_bpSaved','l_bpFaced','winner_rank','loser_rank']:
         if c in hard.columns: hard[c]=pd.to_numeric(hard[c],errors='coerce')
@@ -567,13 +550,13 @@ def model(_atp, _ps):
     hard['bpc']=np.where(hard['l_bpFaced']>0,(hard['l_bpFaced']-hard['l_bpSaved'])/hard['l_bpFaced'],np.nan)
     hard['rank_diff']=hard['loser_rank']-hard['winner_rank']
     md=hard[['winner_name','loser_name','rank_diff']].dropna()
-    for side,pfx in [('winner_name','w'),('loser_name','l')]:
+    for side,pfx in[('winner_name','w'),('loser_name','l')]:
         md=md.merge(_ps[['player','hwp','aces','df','bps','bpc']],left_on=side,right_on='player',how='left').drop(columns='player')
         md=md.rename(columns={'hwp':f'{pfx}wp','aces':f'{pfx}ac','df':f'{pfx}df','bps':f'{pfx}bs','bpc':f'{pfx}bc'})
-    for c in ['wp','ac','df','bs','bc']: md[f'd_{c}']=md[f'w{c}']-md[f'l{c}']
+    for c in['wp','ac','df','bs','bc']: md[f'd_{c}']=md[f'w{c}']-md[f'l{c}']
     md['label']=1
     mir=md.copy()
-    for c in ['rank_diff','d_wp','d_ac','d_df','d_bs','d_bc']: mir[c]=-mir[c]
+    for c in['rank_diff','d_wp','d_ac','d_df','d_bs','d_bc']: mir[c]=-mir[c]
     mir['label']=0
     tr=pd.concat([md,mir],ignore_index=True)
     F=['rank_diff','d_wp','d_ac','d_df','d_bs','d_bc']
@@ -583,7 +566,7 @@ def model(_atp, _ps):
     rf.fit(Xtr,ytr)
     return rf,F
 
-def pred(pa, pb, rf, F, ps, rm):
+def predict(pa,pb,rf,F,ps,rm):
     sa=ps[ps['player']==pa]; sb=ps[ps['player']==pb]
     if len(sa)==0 or len(sb)==0: return 0.5,0.5
     sa,sb=sa.iloc[0],sb.iloc[0]
@@ -594,309 +577,317 @@ def pred(pa, pb, rf, F, ps, rm):
     return p,1-p
 
 # ── INIT ─────────────────────────────────────────────────────────
-atp, uso, ml, tourney = load()
-for df in [atp,uso]:
+atp,uso,ml,tourney=load()
+for df in[atp,uso]:
     if 'tourney_date' in df.columns: df['tourney_date']=pd.to_datetime(df['tourney_date'],errors='coerce')
     if 'tourney_year' not in df.columns: df['tourney_year']=df['tourney_date'].dt.year
     if 'surface' in df.columns: df['surface']=df['surface'].str.strip().str.title()
-
-ps=stats(atp,uso)
-rf_m,F=model(atp,ps)
+ps=calc_stats(atp,uso)
+rf_m,F=train(atp,ps)
 rm=ml.set_index('full_name')['atp_rank'].to_dict() if 'full_name' in ml.columns and 'atp_rank' in ml.columns else {}
 if 'full_name' in ml.columns:
     all_players=sorted([p for p in ml['full_name'].tolist() if p in ps['player'].values])
 else:
     all_players=sorted(ps[ps['ht']>=50]['player'].tolist())
 
-FLAGS={'ITA':'🇮🇹','ESP':'🇪🇸','GER':'🇩🇪','SRB':'🇷🇸','USA':'🇺🇸','CAN':'🇨🇦',
-       'AUS':'🇦🇺','RUS':'🇷🇺','GBR':'🇬🇧','FRA':'🇫🇷','NOR':'🇳🇴','DEN':'🇩🇰',
-       'GRE':'🇬🇷','ARG':'🇦🇷','CHI':'🇨🇱','KAZ':'🇰🇿','BRA':'🇧🇷','PER':'🇵🇪',
-       'MON':'🇲🇨','CZE':'🇨🇿','POL':'🇵🇱','BEL':'🇧🇪','NED':'🇳🇱','HUN':'🇭🇺',
-       'SUI':'🇨🇭','CRO':'🇭🇷','BUL':'🇧🇬','TPE':'🇹🇼','JPN':'🇯🇵','KOR':'🇰🇷'}
+FL={'ITA':'🇮🇹','ESP':'🇪🇸','GER':'🇩🇪','SRB':'🇷🇸','USA':'🇺🇸','CAN':'🇨🇦',
+    'AUS':'🇦🇺','RUS':'🇷🇺','GBR':'🇬🇧','FRA':'🇫🇷','NOR':'🇳🇴','DEN':'🇩🇰',
+    'GRE':'🇬🇷','ARG':'🇦🇷','CHI':'🇨🇱','KAZ':'🇰🇿','BRA':'🇧🇷','PER':'🇵🇪',
+    'MON':'🇲🇨','CZE':'🇨🇿','POL':'🇵🇱','BEL':'🇧🇪','NED':'🇳🇱','HUN':'🇭🇺',
+    'SUI':'🇨🇭','CRO':'🇭🇷','BUL':'🇧🇬','TPE':'🇹🇼','JPN':'🇯🇵','KOR':'🇰🇷'}
 def flg(p):
-    if 'full_name' in ml.columns and 'country' in ml.columns:
-        r=ml[ml['full_name']==p]
-        if len(r)>0: return FLAGS.get(r.iloc[0]['country'],'🎾')
-    return '🎾'
+    return ""
 
-top_max = tourney['win_title'].max()
+top_max=tourney['win_title'].max()
 
 # ── NAVBAR ───────────────────────────────────────────────────────
 st.markdown("""
 <div class="navbar">
-    <div class="nav-brand">
-        <div class="nav-dot"></div>
-        US OPEN
-        <span class="nav-tag">2026</span>
+    <div class="nav-logo">
+        <div class="nav-live"></div>
+        US OPEN 2026
     </div>
-    <div style="font-size:0.8em;color:#334155;font-weight:500;letter-spacing:1px">
-        FLUSHING MEADOWS · NEW YORK
-    </div>
+    <div class="nav-city">Flushing Meadows · New York</div>
 </div>
 """, unsafe_allow_html=True)
 
-# ── PAGE NAV ─────────────────────────────────────────────────────
-if 'page' not in st.session_state:
-    st.session_state.page = 'Home'
+# ── NAV TABS ─────────────────────────────────────────────────────
+if 'pg' not in st.session_state:
+    st.session_state.pg = 'Home'
 
-cols = st.columns([1,1,1,1,8])
-pages = ['Home','Players','Predictor','Tournament']
-labels = ['🏠  Home','👤  Players','🎯  Predictor','🏆  Tournament']
-for i,(col,pg,lbl) in enumerate(zip(cols[:4],pages,labels)):
+st.markdown('<div style="height:1px;background:rgba(255,255,255,0.04)"></div>', unsafe_allow_html=True)
+st.markdown('<div style="padding:20px 80px 0">', unsafe_allow_html=True)
+
+c1,c2,c3,c4,c5 = st.columns([2,2,2,2,10])
+for col,pg,lbl in [(c1,'Home','Home'),(c2,'Players','Players'),(c3,'Predictor','Predictor'),(c4,'Tournament','Tournament')]:
     with col:
-        if st.button(lbl, key=f'nav_{pg}', use_container_width=True):
-            st.session_state.page = pg
+        if st.button(lbl, key=f'b_{pg}', use_container_width=True):
+            st.session_state.pg = pg
 
-page = st.session_state.page
+st.markdown('</div>', unsafe_allow_html=True)
+st.markdown('<div style="height:1px;background:rgba(255,255,255,0.04);margin-top:20px"></div>', unsafe_allow_html=True)
+
+pg = st.session_state.pg
 
 # ════════════════════════════════════
 # HOME
 # ════════════════════════════════════
-if page == 'Home':
-    top10 = tourney.head(10).reset_index(drop=True)
-
+if pg == 'Home':
     st.markdown(f"""
     <div class="hero">
-        <div class="hero-tag">
+        <div class="hero-eyebrow">
             <span style="width:6px;height:6px;background:#22C55E;border-radius:50%;display:inline-block"></span>
-            Grand Slam · Hard Court · New York
+            Grand Slam · Hard Court · August 2026
         </div>
-        <div class="hero-h1">US<br><span>OPEN</span><br>2026</div>
-        <div class="hero-p">AI-powered predictions for the US Open draw. Built with 10 years of ATP match data and machine learning.</div>
-        <div class="hero-stats">
-            <div><div class="hero-stat-num">{len(atp):,}</div><div class="hero-stat-lbl">Matches analyzed</div></div>
-            <div><div class="hero-stat-num">{len(uso):,}</div><div class="hero-stat-lbl">US Open matches</div></div>
-            <div><div class="hero-stat-num">128</div><div class="hero-stat-lbl">Players in draw</div></div>
-            <div><div class="hero-stat-num">1,000</div><div class="hero-stat-lbl">Simulations run</div></div>
+        <div class="hero-h1">US<br><em>OPEN</em><br>2026</div>
+        <div class="hero-desc">
+            Machine learning predictions built on 10 years of ATP match data.
+            Discover who's most likely to lift the trophy at Flushing Meadows.
+        </div>
+        <div class="hero-numbers">
+            <div class="hero-num">
+                <div class="hero-num-val">{len(atp):,}</div>
+                <div class="hero-num-lbl">Matches analyzed</div>
+            </div>
+            <div class="hero-num">
+                <div class="hero-num-val">{len(uso):,}</div>
+                <div class="hero-num-lbl">US Open matches</div>
+            </div>
+            <div class="hero-num">
+                <div class="hero-num-val">128</div>
+                <div class="hero-num-lbl">Players in draw</div>
+            </div>
+            <div class="hero-num">
+                <div class="hero-num-val">1,000</div>
+                <div class="hero-num-lbl">Simulations run</div>
+            </div>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown('<div class="section">', unsafe_allow_html=True)
-    st.markdown('<div class="s-header"><div class="s-title">Top Contenders</div><div class="s-sub">Ranked by title probability</div></div>', unsafe_allow_html=True)
+    st.markdown('<div class="page">', unsafe_allow_html=True)
+    st.markdown('<div class="sec-label">Predictions</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sec-h2">Top Contenders</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sec-sub" style="margin-bottom:32px">Ranked by probability of winning the US Open 2026</div>', unsafe_allow_html=True)
 
-    cards = []
-    styles = ['gold','silver','bronze','','','','','','','']
-    for i, row in top10.iterrows():
-        f = flg(row['player'])
-        pct = row['win_title']
-        bar_w = int(pct / top_max * 100)
-        style = styles[i]
-        cards.append(f"""
-        <div class="c-card {style}">
-            <div class="c-pos">#{i+1}</div>
-            <div class="c-flag">{f}</div>
+    top10 = tourney.head(10).reset_index(drop=True)
+    accents = [
+        'background:linear-gradient(90deg,#C9A84C,#F0C060)',
+        'background:linear-gradient(90deg,#94A3B8,#CBD5E1)',
+        'background:linear-gradient(90deg,#B45309,#D97706)',
+        'background:#22C55E22',
+        'background:#22C55E22',
+        'background:#22C55E22',
+        'background:#22C55E22',
+        'background:#22C55E22',
+        'background:#22C55E22',
+        'background:#22C55E22',
+    ]
+    cards = ""
+    for i,row in top10.iterrows():
+        bw = int(row['win_title']/top_max*100)
+        cards += f"""
+        <div class="c-card">
+            <div class="c-accent" style="{accents[i]}"></div>
+            <div class="c-rank">#{i+1} Contender</div>
+            <div class="c-flag">{flg(row['player'])}</div>
             <div class="c-name">{row['player']}</div>
-            <div class="c-prob">{pct:.1%}</div>
-            <div class="c-prob-lbl">title probability</div>
-            <div class="c-bar"><div class="c-bar-fill" style="width:{bar_w}%"></div></div>
-        </div>""")
-
-    st.markdown(f'<div class="contender-grid">{"".join(cards)}</div>', unsafe_allow_html=True)
+            <div class="c-pct">{row['win_title']:.1%}</div>
+            <div class="c-pct-lbl">title probability</div>
+            <div class="c-bar"><div class="c-bar-fill" style="width:{bw}%"></div></div>
+        </div>"""
+    st.markdown(f'<div class="c-grid">{cards}</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ════════════════════════════════════
 # PLAYERS
 # ════════════════════════════════════
-elif page == 'Players':
-    st.markdown("""
-    <div class="hero" style="padding:60px 80px">
-        <div class="hero-tag">Head to Head</div>
-        <div class="hero-h1" style="font-size:4em">Player<br><span>Comparison</span></div>
-    </div>""", unsafe_allow_html=True)
+elif pg == 'Players':
+    st.markdown('<div class="page">', unsafe_allow_html=True)
+    st.markdown('<div class="sec-label">Head to Head</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sec-h2">Player Comparison</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sec-sub" style="margin-bottom:40px">Compare statistics between any two players in the 2026 draw</div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="section-sm">', unsafe_allow_html=True)
     c1,c2 = st.columns(2)
     with c1:
-        pa = st.selectbox('Select Player A', all_players,
-                          index=all_players.index('Jannik Sinner') if 'Jannik Sinner' in all_players else 0)
+        pa=st.selectbox('Player A',all_players,
+                        index=all_players.index('Jannik Sinner') if 'Jannik Sinner' in all_players else 0)
     with c2:
-        pb = st.selectbox('Select Player B', all_players,
-                          index=all_players.index('Carlos Alcaraz') if 'Carlos Alcaraz' in all_players else 1)
+        pb=st.selectbox('Player B',all_players,
+                        index=all_players.index('Carlos Alcaraz') if 'Carlos Alcaraz' in all_players else 1)
 
-    if pa and pb and pa != pb:
+    if pa and pb and pa!=pb:
         sa_df=ps[ps['player']==pa]; sb_df=ps[ps['player']==pb]
         if len(sa_df)>0 and len(sb_df)>0:
             sa=sa_df.iloc[0]; sb=sb_df.iloc[0]
             ra=int(rm.get(pa,999)); rb=int(rm.get(pb,999))
-
             h2h_a=len(atp[(atp['winner_name']==pa)&(atp['loser_name']==pb)])
             h2h_b=len(atp[(atp['winner_name']==pb)&(atp['loser_name']==pa)])
 
-            def w(va,vb): return 'win' if va>=vb else 'lose'
-            def wrev(va,vb): return 'win' if va<=vb else 'lose'
+            def w(a,b,rev=False):
+                if rev: return ('s-win','s-lose') if a<=b else ('s-lose','s-win')
+                return ('s-win','s-lose') if a>=b else ('s-lose','s-win')
 
-            stats_rows = ""
-            stat_list = [
-                ('Hard Court Win %', f"{sa['hwp']:.1%}", f"{sb['hwp']:.1%}", w(sa['hwp'],sb['hwp']), w(sb['hwp'],sa['hwp'])),
-                ('Recent Form', f"{sa['rfp']:.1%}", f"{sb['rfp']:.1%}", w(sa['rfp'],sb['rfp']), w(sb['rfp'],sa['rfp'])),
-                ('US Open Win %', f"{sa['uwp']:.1%}", f"{sb['uwp']:.1%}", w(sa['uwp'],sb['uwp']), w(sb['uwp'],sa['uwp'])),
-                ('Avg Aces / Match', f"{sa['aces']:.1f}", f"{sb['aces']:.1f}", w(sa['aces'],sb['aces']), w(sb['aces'],sa['aces'])),
-                ('Double Faults / Match', f"{sa['df']:.1f}", f"{sb['df']:.1f}", wrev(sa['df'],sb['df']), wrev(sb['df'],sa['df'])),
-                ('BP Save Rate', f"{sa['bps']:.1%}", f"{sb['bps']:.1%}", w(sa['bps'],sb['bps']), w(sb['bps'],sa['bps'])),
-                ('BP Conversion Rate', f"{sa['bpc']:.1%}", f"{sb['bpc']:.1%}", w(sa['bpc'],sb['bpc']), w(sb['bpc'],sa['bpc'])),
-                ('1st Serve %', f"{sa.get('fsp',0):.1%}", f"{sb.get('fsp',0):.1%}", w(sa.get('fsp',0),sb.get('fsp',0)), w(sb.get('fsp',0),sa.get('fsp',0))),
-                ('H2H Wins', str(h2h_a), str(h2h_b), w(h2h_a,h2h_b), w(h2h_b,h2h_a)),
+            rows=""
+            stats_list=[
+                ('Hard Court Win %',f"{sa['hwp']:.1%}",f"{sb['hwp']:.1%}",w(sa['hwp'],sb['hwp'])),
+                ('Recent Form',f"{sa['rfp']:.1%}",f"{sb['rfp']:.1%}",w(sa['rfp'],sb['rfp'])),
+                ('US Open Win %',f"{sa['uwp']:.1%}",f"{sb['uwp']:.1%}",w(sa['uwp'],sb['uwp'])),
+                ('Aces per Match',f"{sa['aces']:.1f}",f"{sb['aces']:.1f}",w(sa['aces'],sb['aces'])),
+                ('Double Faults',f"{sa['df']:.1f}",f"{sb['df']:.1f}",w(sa['df'],sb['df'],rev=True)),
+                ('Break Point Save %',f"{sa['bps']:.1%}",f"{sb['bps']:.1%}",w(sa['bps'],sb['bps'])),
+                ('Break Point Conv. %',f"{sa['bpc']:.1%}",f"{sb['bpc']:.1%}",w(sa['bpc'],sb['bpc'])),
+                ('1st Serve %',f"{sa.get('fsp',0):.1%}",f"{sb.get('fsp',0):.1%}",w(sa.get('fsp',0),sb.get('fsp',0))),
+                ('H2H Record',str(h2h_a),str(h2h_b),w(h2h_a,h2h_b)),
             ]
-            for nm, va, vb, ca, cb in stat_list:
-                stats_rows += f"""
-                <div class="stat-block">
-                    <div class="sv sv-left {ca}">{va}</div>
-                    <div class="stat-name">{nm}</div>
-                    <div class="sv sv-right {cb}">{vb}</div>
+            for nm,va,vb,(ca,cb) in stats_list:
+                rows+=f"""
+                <div class="stat-row">
+                    <div class="stat-v stat-v-l {ca}">{va}</div>
+                    <div class="stat-n">{nm}</div>
+                    <div class="stat-v stat-v-r {cb}">{vb}</div>
                 </div>"""
 
             st.markdown(f"""
-            <div class="cmp-wrap" style="margin-top:24px">
-                <div class="cmp-header">
-                    <div class="cmp-player">
-                        <div style="font-size:2em;margin-bottom:8px">{flg(pa)}</div>
-                        <div class="cmp-player-name" style="color:#4A90D9">{pa}</div>
-                        <div class="cmp-player-rank">ATP #{ra}</div>
+            <div class="cmp-box">
+                <div class="cmp-top">
+                    <div class="cmp-p">
+                        <div class="cmp-p-flag">{flg(pa)}</div>
+                        <div class="cmp-p-name" style="color:#60A5FA">{pa}</div>
+                        <div class="cmp-p-rank">ATP #{ra}</div>
                     </div>
                     <div class="cmp-vs">VS</div>
-                    <div class="cmp-player">
-                        <div style="font-size:2em;margin-bottom:8px">{flg(pb)}</div>
-                        <div class="cmp-player-name" style="color:#EF5350">{pb}</div>
-                        <div class="cmp-player-rank">ATP #{rb}</div>
+                    <div class="cmp-p">
+                        <div class="cmp-p-flag">{flg(pb)}</div>
+                        <div class="cmp-p-name" style="color:#F87171">{pb}</div>
+                        <div class="cmp-p-rank">ATP #{rb}</div>
                     </div>
                 </div>
-                {stats_rows}
+                {rows}
             </div>""", unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ════════════════════════════════════
 # PREDICTOR
 # ════════════════════════════════════
-elif page == 'Predictor':
-    st.markdown("""
-    <div class="hero" style="padding:60px 80px">
-        <div class="hero-tag">Machine Learning</div>
-        <div class="hero-h1" style="font-size:4em">Match<br><span>Predictor</span></div>
-        <div class="hero-p">Select two players and our model will predict who wins on hard court.</div>
-    </div>""", unsafe_allow_html=True)
+elif pg == 'Predictor':
+    st.markdown('<div class="page">', unsafe_allow_html=True)
+    st.markdown('<div class="sec-label">AI Prediction</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sec-h2">Match Predictor</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sec-sub" style="margin-bottom:40px">Select two players to predict who wins on hard court</div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="section-sm">', unsafe_allow_html=True)
-    c1,c2 = st.columns(2)
+    c1,c2=st.columns(2)
     with c1:
-        pa = st.selectbox('Player A', all_players,
-                          index=all_players.index('Jannik Sinner') if 'Jannik Sinner' in all_players else 0, key='pr_a')
+        pa=st.selectbox('Player A',all_players,
+                        index=all_players.index('Jannik Sinner') if 'Jannik Sinner' in all_players else 0,key='pr_a')
     with c2:
-        pb = st.selectbox('Player B', all_players,
-                          index=all_players.index('Carlos Alcaraz') if 'Carlos Alcaraz' in all_players else 1, key='pr_b')
-    st.markdown('<div style="height:16px"></div>', unsafe_allow_html=True)
-    btn = st.button('Predict Winner', use_container_width=True)
+        pb=st.selectbox('Player B',all_players,
+                        index=all_players.index('Carlos Alcaraz') if 'Carlos Alcaraz' in all_players else 1,key='pr_b')
+
+    st.markdown('<div style="height:20px"></div>', unsafe_allow_html=True)
+    btn=st.button('Predict Match Winner', use_container_width=True)
 
     if btn:
         if pa==pb:
             st.warning('Please select two different players.')
         else:
-            pa_p, pb_p = pred(pa, pb, rf_m, F, ps, rm)
-            winner = pa if pa_p > pb_p else pb
+            pa_p,pb_p=predict(pa,pb,rf_m,F,ps,rm)
+            winner=pa if pa_p>pb_p else pb
+
+            st.markdown(f"""
+            <div class="pred-winner-box">
+                <div class="pred-tag">🏆 &nbsp; Predicted Winner</div>
+                <div class="pred-name">{flg(winner)}&nbsp;{winner}</div>
+                <div class="pred-prob-lbl">Win probability &nbsp;·&nbsp; {max(pa_p,pb_p):.1%}</div>
+            </div>""", unsafe_allow_html=True)
+
+            ca='#60A5FA'; cb='#F87171'
+            st.markdown(f"""
+            <div class="prob-split">
+                <div class="prob-side">
+                    <div class="prob-big" style="color:{ca}">{pa_p:.1%}</div>
+                    <div class="prob-player-name">{flg(pa)} {pa}</div>
+                    <div class="prob-bar-wrap">
+                        <div class="prob-bar-fill" style="width:{pa_p*100:.0f}%;background:{ca}"></div>
+                    </div>
+                </div>
+                <div class="prob-sep">VS</div>
+                <div class="prob-side">
+                    <div class="prob-big" style="color:{cb}">{pb_p:.1%}</div>
+                    <div class="prob-player-name">{flg(pb)} {pb}</div>
+                    <div class="prob-bar-wrap">
+                        <div class="prob-bar-fill" style="width:{pb_p*100:.0f}%;background:{cb}"></div>
+                    </div>
+                </div>
+            </div>""", unsafe_allow_html=True)
 
             sa=ps[ps['player']==pa].iloc[0] if len(ps[ps['player']==pa])>0 else None
             sb=ps[ps['player']==pb].iloc[0] if len(ps[ps['player']==pb])>0 else None
             ra=rm.get(pa,999); rb=rm.get(pb,999)
-
-            st.markdown(f"""
-            <div class="pred-result">
-                <div class="pred-label">🏆 Predicted Winner</div>
-                <div class="pred-winner">{flg(winner)} {winner}</div>
-                <div class="pred-pct">Win probability · {max(pa_p,pb_p):.1%}</div>
-            </div>""", unsafe_allow_html=True)
-
-            col_a = '#4A90D9'
-            col_b = '#EF5350'
-            bar_a = f'background:linear-gradient(90deg,{col_a},{col_a}88)'
-            bar_b = f'background:linear-gradient(90deg,{col_b},{col_b}88)'
-
-            st.markdown(f"""
-            <div class="prob-row">
-                <div class="prob-side">
-                    <div class="prob-pct-big" style="color:{col_a}">{pa_p:.1%}</div>
-                    <div class="prob-name">{flg(pa)} {pa}</div>
-                    <div class="prob-bar-wrap">
-                        <div class="prob-bar" style="{bar_a};width:{pa_p*100:.0f}%"></div>
-                    </div>
-                </div>
-                <div class="prob-vs">VS</div>
-                <div class="prob-side">
-                    <div class="prob-pct-big" style="color:{col_b}">{pb_p:.1%}</div>
-                    <div class="prob-name">{flg(pb)} {pb}</div>
-                    <div class="prob-bar-wrap">
-                        <div class="prob-bar" style="{bar_b};width:{pb_p*100:.0f}%"></div>
-                    </div>
-                </div>
-            </div>""", unsafe_allow_html=True)
-
             if sa is not None and sb is not None:
-                def fw(va,vb,rev=False):
-                    better = (va<=vb) if rev else (va>=vb)
-                    return f'color:#22C55E;font-weight:800' if better else f'color:#334155'
-                factors = [
-                    ('ATP Ranking', f'#{int(ra)}', f'#{int(rb)}', fw(ra,rb,rev=True), fw(rb,ra,rev=True)),
-                    ('Hard Court Win %', f"{sa['hwp']:.1%}", f"{sb['hwp']:.1%}", fw(sa['hwp'],sb['hwp']), fw(sb['hwp'],sa['hwp'])),
-                    ('Recent Form', f"{sa['rfp']:.1%}", f"{sb['rfp']:.1%}", fw(sa['rfp'],sb['rfp']), fw(sb['rfp'],sa['rfp'])),
-                    ('BP Save %', f"{sa['bps']:.1%}", f"{sb['bps']:.1%}", fw(sa['bps'],sb['bps']), fw(sb['bps'],sa['bps'])),
+                def fstyle(a,b,rev=False):
+                    better=(a<=b) if rev else (a>=b)
+                    return 'color:#22C55E;font-weight:800' if better else 'color:#1E293B'
+                factors=[
+                    ('ATP Ranking',f'#{int(ra)}',f'#{int(rb)}',fstyle(ra,rb,rev=True),fstyle(rb,ra,rev=True)),
+                    ('Hard Court Win %',f"{sa['hwp']:.1%}",f"{sb['hwp']:.1%}",fstyle(sa['hwp'],sb['hwp']),fstyle(sb['hwp'],sa['hwp'])),
+                    ('Recent Form',f"{sa['rfp']:.1%}",f"{sb['rfp']:.1%}",fstyle(sa['rfp'],sb['rfp']),fstyle(sb['rfp'],sa['rfp'])),
+                    ('BP Save %',f"{sa['bps']:.1%}",f"{sb['bps']:.1%}",fstyle(sa['bps'],sb['bps']),fstyle(sb['bps'],sa['bps'])),
                 ]
-                cards_f = ""
-                for nm, va, vb, fa_s, fb_s in factors:
-                    cards_f += f"""
+                fc=""
+                for nm,va,vb,fa_s,fb_s in factors:
+                    fc+=f"""
                     <div class="factor-card">
-                        <div class="factor-lbl">{nm}</div>
+                        <div class="factor-title">{nm}</div>
                         <div class="factor-vals">
                             <div class="factor-val" style="{fa_s}">{va}</div>
-                            <div class="factor-sep">·</div>
+                            <div class="factor-dot">·</div>
                             <div class="factor-val" style="{fb_s}">{vb}</div>
                         </div>
                     </div>"""
-                st.markdown(f'<div style="margin-top:32px;font-family:Bebas Neue,Impact,sans-serif;font-size:1.1em;letter-spacing:3px;color:#334155;margin-bottom:12px">KEY FACTORS</div>', unsafe_allow_html=True)
-                st.markdown(f'<div class="factor-grid">{cards_f}</div>', unsafe_allow_html=True)
+                st.markdown(f'<div style="margin-top:8px;margin-bottom:4px;font-size:0.68em;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#334155">Key Factors</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="factors-grid">{fc}</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ════════════════════════════════════
 # TOURNAMENT
 # ════════════════════════════════════
-elif page == 'Tournament':
-    st.markdown("""
-    <div class="hero" style="padding:60px 80px">
-        <div class="hero-tag">1,000 Simulations</div>
-        <div class="hero-h1" style="font-size:4em">Tournament<br><span>Prediction</span></div>
-        <div class="hero-p">Round-by-round win probabilities for the full US Open 2026 draw.</div>
-    </div>""", unsafe_allow_html=True)
+elif pg == 'Tournament':
+    st.markdown('<div class="page">', unsafe_allow_html=True)
+    st.markdown('<div class="sec-label">1,000 Simulations</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sec-h2">Tournament Prediction</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sec-sub" style="margin-bottom:40px">Round-by-round probabilities for every player in the 2026 US Open draw</div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="section-sm">', unsafe_allow_html=True)
-
-    rows_html = ""
-    for i, row in tourney.iterrows():
-        pos_cls = 'top3' if i < 3 else ''
-        t_cls = 'hi' if row['win_title'] > 0.1 else 'mid' if row['win_title'] > 0.03 else 'lo'
-        f_cls = 'hi' if row['reach_final'] > 0.3 else 'mid' if row['reach_final'] > 0.1 else 'lo'
-        s_cls = 'hi' if row['reach_semis'] > 0.4 else 'mid' if row['reach_semis'] > 0.2 else 'lo'
-        q_cls = 'hi' if row['reach_qtrs'] > 0.5 else 'mid' if row['reach_qtrs'] > 0.3 else 'lo'
-        rows_html += f"""
-        <div class="tourn-row">
-            <div class="tourn-pos {pos_cls}">{i+1}</div>
-            <div class="tourn-player">
-                <div class="tourn-flag">{flg(row['player'])}</div>
-                <div class="tourn-name">{row['player']}</div>
+    rows_h=""
+    for i,row in tourney.iterrows():
+        pc=('t-hi' if i<3 else '')
+        tc='t-hi' if row['win_title']>0.08 else 't-mid' if row['win_title']>0.02 else 't-lo'
+        fc='t-hi' if row['reach_final']>0.25 else 't-mid' if row['reach_final']>0.08 else 't-lo'
+        sc='t-hi' if row['reach_semis']>0.35 else 't-mid' if row['reach_semis']>0.15 else 't-lo'
+        qc='t-hi' if row['reach_qtrs']>0.45 else 't-mid' if row['reach_qtrs']>0.25 else 't-lo'
+        rows_h+=f"""
+        <div class="t-row">
+            <div class="t-pos {pc}">{i+1}</div>
+            <div class="t-player">
+                <div class="t-flag">{flg(row['player'])}</div>
+                <div class="t-name">{row['player']}</div>
             </div>
-            <div class="tourn-val {t_cls}">{row['win_title']:.1%}</div>
-            <div class="tourn-val {f_cls}">{row['reach_final']:.1%}</div>
-            <div class="tourn-val {s_cls}">{row['reach_semis']:.1%}</div>
-            <div class="tourn-val {q_cls}">{row['reach_qtrs']:.1%}</div>
+            <div class="t-val {tc}">{row['win_title']:.1%}</div>
+            <div class="t-val {fc}">{row['reach_final']:.1%}</div>
+            <div class="t-val {sc}">{row['reach_semis']:.1%}</div>
+            <div class="t-val {qc}">{row['reach_qtrs']:.1%}</div>
         </div>"""
 
     st.markdown(f"""
-    <div class="tourn-table">
-        <div class="tourn-thead">
-            <div class="tourn-th">#</div>
-            <div class="tourn-th" style="text-align:left">Player</div>
-            <div class="tourn-th">Title</div>
-            <div class="tourn-th">Final</div>
-            <div class="tourn-th">Semis</div>
-            <div class="tourn-th">Quarter-F</div>
+    <div class="t-table">
+        <div class="t-head">
+            <div class="t-th">#</div>
+            <div class="t-th" style="text-align:left">Player</div>
+            <div class="t-th">Title</div>
+            <div class="t-th">Final</div>
+            <div class="t-th">Semis</div>
+            <div class="t-th">Quarter-F</div>
         </div>
-        {rows_html}
+        {rows_h}
     </div>""", unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
