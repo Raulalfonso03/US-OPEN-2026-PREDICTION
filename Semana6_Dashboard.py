@@ -238,7 +238,7 @@ def train(_atp, _ps):
     tr = pd.concat([md,mir],ignore_index=True)
     F = ['rank_diff','d_wp','d_ac','d_df','d_bs','d_bc']
     X = tr[F].fillna(0); y = tr['label']
-    Xtr,_,ytr,_ = train_test_split(X,y,test_size=0.2,random_state=42,stratify=y)
+    Xtr,,ytr, = train_test_split(X,y,test_size=0.2,random_state=42,stratify=y)
     rf = RandomForestClassifier(n_estimators=100,max_depth=7,random_state=42)
     rf.fit(Xtr,ytr)
     return rf,F
@@ -306,9 +306,9 @@ with st.sidebar:
     )
     st.divider()
     st.markdown(f'### About')
-    st.markdown(f'Matches analyzed: **{len(atp):,}**')
-    st.markdown(f'US Open matches: **{len(uso):,}**')
-    st.markdown(f'Years of data: **10**')
+    st.markdown(f'Matches analyzed: *{len(atp):,}*')
+    st.markdown(f'US Open matches: *{len(uso):,}*')
+    st.markdown(f'Years of data: *10*')
 
 # ════════════════════════════════════
 # HOME
@@ -353,14 +353,28 @@ if '🏠' in page:
     st.plotly_chart(fig, use_container_width=True)
 
     st.divider()
+    # Description
+    st.info("Users can compare players, predict match winners, and view the Top 10 tournament contenders based on player statistics and recent performance.")
+    st.write("")
+
     medals = ['🥇','🥈','🥉','4','5','6','7','8','9','10']
+    
+    # Header row
+    h1,h2,h3,h4,h5 = st.columns([1,5,2,2,2])
+    h2.markdown("*Player*")
+    h3.markdown("*Title*")
+    h4.markdown("*Final*")
+    h5.markdown("*Semis*")
+    st.divider()
+    
     for i, row in top10.iterrows():
         c1,c2,c3,c4,c5 = st.columns([1,5,2,2,2])
-        with c1: st.markdown(f'### {medals[i]}')
-        with c2: st.markdown(f'**{row["player"]}**')
-        with c3: st.caption('Title'); st.markdown(f'**{row["win_title"]:.1%}**')
-        with c4: st.caption('Final');  st.markdown(f'**{row["reach_final"]:.1%}**')
-        with c5: st.caption('Semis');  st.markdown(f'**{row["reach_semis"]:.1%}**')
+        with c1: st.markdown(f"### {medals[i]}")
+        with c2: st.markdown(f"### {row['player']}")
+        with c3: st.markdown(f"# {row['win_title']:.1%}")
+        with c4: st.markdown(f"## {row['reach_final']:.1%}")
+        with c5: st.markdown(f"## {row['reach_semis']:.1%}")
+        st.divider()
 
 # ════════════════════════════════════
 # PLAYER COMPARISON
@@ -392,12 +406,12 @@ elif '👤' in page:
             c1,c2,c3 = st.columns([3,1,3])
             with c1:
                 st.markdown(f'## {pa}')
-                st.markdown(f'**ATP #{ra}**')
+                st.markdown(f'*ATP #{ra}*')
             with c2:
                 st.markdown('## VS')
             with c3:
                 st.markdown(f'## {pb}')
-                st.markdown(f'**ATP #{rb}**')
+                st.markdown(f'*ATP #{rb}*')
 
             st.divider()
 
@@ -450,9 +464,9 @@ elif '👤' in page:
                 c1,c2,c3 = st.columns([3,3,3])
                 win_a = '✅ ' if a_wins else ''
                 win_b = '✅ ' if not a_wins else ''
-                with c1: st.markdown(f'{win_a}**{va}**')
+                with c1: st.markdown(f'{win_a}*{va}*')
                 with c2: st.caption(stat)
-                with c3: st.markdown(f'{win_b}**{vb}**')
+                with c3: st.markdown(f'{win_b}*{vb}*')
 
 # ════════════════════════════════════
 # MATCH PREDICTOR
@@ -481,7 +495,7 @@ elif '🎯' in page:
             winner = pa if pa_p > pb_p else pb
 
             st.divider()
-            st.success(f'🏆  **{winner}** wins with **{max(pa_p,pb_p):.1%}** probability')
+            st.success(f'🏆  *{winner}* wins with *{max(pa_p,pb_p):.1%}* probability')
             st.write('')
 
             # Gauge chart for winner
